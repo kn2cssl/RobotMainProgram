@@ -68,9 +68,6 @@
 // From module: Delay routines
 #include <delay.h>
 
-// From module: Generic board support
-#include <board.h>
-
 // From module: IOPORT - General purpose I/O service
 #include <ioport.h>
 
@@ -94,6 +91,10 @@
 
 // From module: SPI - Serial Peripheral Interface
 #include <spi.h>
+
+// From module: SPI - XMEGA implementation
+#include <spi_master.h>
+#include <spi_master.h>
 
 // From module: Sleep Controller driver
 #include <sleep.h>

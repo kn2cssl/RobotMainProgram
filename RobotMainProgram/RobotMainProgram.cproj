@@ -20,31 +20,30 @@
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
-    <RamSnippetAddress />
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
     <UncachedRange />
     <preserveEEPROM>true</preserveEEPROM>
-    <OverrideVtorValue />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <BootSegment>2</BootSegment>
-    <eraseonlaunchrule>1</eraseonlaunchrule>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
     <ExternalProgrammingToolCommand />
     <AsfFrameworkConfig>
       <framework-data>
   <options>
-    <option id="common.services.basic.clock" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.basic.cpu" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.delay" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="common.services.ioport" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.services.basic.sleepmgr" value="Add" config="" content-id="Atmel.ASF" />
     <option id="common.utils.interrupt" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.drivers.adc" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.drivers.ioport" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.drivers.pmic" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.drivers.rtc" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="xmega.drivers.spi" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.drivers.tc" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.drivers.twi" value="Add" config="both" content-id="Atmel.ASF" />
     <option id="xmega.drivers.wdt" value="Add" config="" content-id="Atmel.ASF" />
     <option id="xmega.services.pwm" value="Add" config="" content-id="Atmel.ASF" />
-    <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="common.services.basic.spi_master" value="Add" config="standard_spi" content-id="Atmel.ASF" />
   </options>
   <configurations />
   <files>
@@ -115,7 +114,10 @@
     <file path="src/ASF/xmega/drivers/twi/twis.h" framework="" version="3.27.3" source="xmega\drivers\twi\twis.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/xmega/drivers/twi/twi_common.h" framework="" version="3.27.3" source="xmega\drivers\twi\twi_common.h" changed="False" content-id="Atmel.ASF" />
     <file path="src/Config/conf_twim.h" framework="" version="3.27.3" source="xmega\drivers\twi\module_config\conf_twim.h" changed="False" content-id="Atmel.ASF" />
-    <file path="src/ASF/common/boards/board.h" framework="" version="3.27.3" source="common\boards\board.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/common/services/spi/xmega_spi/spi_master.c" framework="" version="3.27.3" source="common\services\spi\xmega_spi\spi_master.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/common/services/spi/spi_master.h" framework="" version="3.27.3" source="common\services\spi\spi_master.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/common/services/spi/xmega_spi/spi_master.h" framework="" version="3.27.3" source="common\services\spi\xmega_spi\spi_master.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/Config/conf_spi_master.h" framework="" version="3.27.3" source="common\services\spi\xmega_spi\module_config\conf_spi_master.h" changed="False" content-id="Atmel.ASF" />
   </files>
   <documentation help="http://asf.atmel.com/docs/3.27.3/common.applications.user_application.user_board.xmegaau/html/index.html" />
   <offline-documentation help="" />
@@ -126,6 +128,20 @@
   <board id="board.user_board.xmegaau" value="Add" config="" content-id="Atmel.ASF" />
 </framework-data>
     </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.ispmk2</avrtool>
+    <avrtoolinterface>PDI</avrtoolinterface>
+    <avrtoolserialnumber>0000B0011821</avrtoolserialnumber>
+    <avrdeviceexpectedsignature>0x1E9642</avrdeviceexpectedsignature>
+    <com_atmel_avrdbg_tool_ispmk2>
+      <ToolOptions>
+        <InterfaceProperties>
+        </InterfaceProperties>
+        <InterfaceName>PDI</InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.ispmk2</ToolType>
+      <ToolNumber>0000B0011821</ToolNumber>
+      <ToolName>AVRISP mkII</ToolName>
+    </com_atmel_avrdbg_tool_ispmk2>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -169,7 +185,8 @@
       <Value>../src/ASF/common/services/sleepmgr</Value>
       <Value>../src/ASF/xmega/drivers/adc</Value>
       <Value>../src/ASF/xmega/drivers/twi</Value>
-      <Value>../src/ASF/common/boards</Value>
+      <Value>../src/ASF/common/services/spi/xmega_spi</Value>
+      <Value>../src/ASF/common/services/spi</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -210,7 +227,8 @@
       <Value>../src/ASF/common/services/sleepmgr</Value>
       <Value>../src/ASF/xmega/drivers/adc</Value>
       <Value>../src/ASF/xmega/drivers/twi</Value>
-      <Value>../src/ASF/common/boards</Value>
+      <Value>../src/ASF/common/services/spi/xmega_spi</Value>
+      <Value>../src/ASF/common/services/spi</Value>
     </ListValues>
   </avrgcc.assembler.general.IncludePaths>
 </AvrGcc>
@@ -258,7 +276,8 @@
       <Value>../src/ASF/common/services/sleepmgr</Value>
       <Value>../src/ASF/xmega/drivers/adc</Value>
       <Value>../src/ASF/xmega/drivers/twi</Value>
-      <Value>../src/ASF/common/boards</Value>
+      <Value>../src/ASF/common/services/spi/xmega_spi</Value>
+      <Value>../src/ASF/common/services/spi</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -300,7 +319,8 @@
       <Value>../src/ASF/common/services/sleepmgr</Value>
       <Value>../src/ASF/xmega/drivers/adc</Value>
       <Value>../src/ASF/xmega/drivers/twi</Value>
-      <Value>../src/ASF/common/boards</Value>
+      <Value>../src/ASF/common/services/spi/xmega_spi</Value>
+      <Value>../src/ASF/common/services/spi</Value>
     </ListValues>
   </avrgcc.assembler.general.IncludePaths>
   <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
@@ -323,6 +343,8 @@
     <Folder Include="src\ASF\common\services\ioport\xmega\" />
     <Folder Include="src\ASF\common\services\sleepmgr\" />
     <Folder Include="src\ASF\common\services\sleepmgr\xmega\" />
+    <Folder Include="src\ASF\common\services\spi\" />
+    <Folder Include="src\ASF\common\services\spi\xmega_spi\" />
     <Folder Include="src\ASF\common\utils\" />
     <Folder Include="src\ASF\common\utils\interrupt\" />
     <Folder Include="src\ASF\common\utils\make\" />
@@ -348,9 +370,36 @@
     <Folder Include="src\config\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\ASF\common\boards\board.h">
+    <None Include="src\ASF\common\services\spi\spi_master.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\ASF\common\services\spi\xmega_spi\spi_master.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\common\services\spi\xmega_spi\spi_master.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\config\conf_spi_master.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\controller.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\controller.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\init.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\init.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\nrf24l01.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\nrf24l01.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\xmega\drivers\adc\adc.c">
       <SubType>compile</SubType>
     </Compile>
@@ -516,9 +565,6 @@
     <None Include="src\ASF\xmega\utils\preprocessor\stringz.h">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="src\ASF\common\boards\user_board\init.c">
-      <SubType>compile</SubType>
-    </Compile>
     <None Include="src\ASF\common\utils\interrupt\interrupt_avr8.h">
       <SubType>compile</SubType>
     </None>
@@ -552,6 +598,12 @@
     <None Include="src\ASF\xmega\utils\compiler.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\functions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\functions.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>

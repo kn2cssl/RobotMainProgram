@@ -47,7 +47,6 @@
 #define XMEGA_OSC_H_INCLUDED
 
 #include <compiler.h>
-#include <board.h>
 
 /**
  * \weakgroup osc_group

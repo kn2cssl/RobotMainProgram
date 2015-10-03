@@ -191,7 +191,8 @@ void tc_disable(volatile void *tc);
  *       via \ref tc_set_overflow_interrupt_level() for interrupts to be
  *       generated each time the timer overflows.
  *
- * \param tc Pointer to the Timer Counter (TC) base address
+ * \param tc Pointer to the Timer Counter (TC) 
+ 
  * \param callback Reference to a callback function
  */
 void tc_set_overflow_interrupt_callback(volatile void *tc,
