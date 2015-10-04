@@ -66,7 +66,7 @@ void setpoint_generator ( void ) ;
 //run time : 12407 clk
 void state_feed_back ( void ) ;
 
-void kalman_observer ( void ) ;
+void observer ( void ) ;
 
 double sign ( double number ) ;
 
