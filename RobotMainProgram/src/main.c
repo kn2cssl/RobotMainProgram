@@ -40,8 +40,8 @@ int main (void)
 	pmic_init();     //! Enabling all interrupt levels
  	port_init();     //! Initializing ports
 	robot_id_set();  //! Setting robot id
- 	spi_init();
- 	nrf_init();
+ 	spi_init();      //! Initializing spi
+ 	nrf_init();      //! Initializing NRF24l01+
 
 	sei();
 	
