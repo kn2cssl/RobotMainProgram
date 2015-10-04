@@ -43,8 +43,9 @@ struct Robot_Data
 	HL Vy ;
 	HL Wr ;
 	HL alpha ;
-	uint8_t KCK;
-	uint8_t CHP;
+	uint8_t KICK;
+	uint8_t CHIP;
+	uint8_t SPIN;
 	uint8_t free_wheel ;
 	uint8_t ASK;
 	
