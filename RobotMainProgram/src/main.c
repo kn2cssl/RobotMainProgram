@@ -78,10 +78,10 @@ int main (void)
 			
 			state_feed_back() ;
 			
-			Robot.W0_sp.full = Robot.Vx_sp.full;//u[0][0] /battery_voltage * max_ocr;
-			Robot.W1_sp.full = Robot.Vy_sp.full;//u[1][0] /battery_voltage * max_ocr;
-			Robot.W2_sp.full = Robot.Wr_sp.full;//u[2][0] /battery_voltage * max_ocr;
-			Robot.W3_sp.full = Robot.alpha.full;//u[3][0] /battery_voltage * max_ocr;
+			Robot.W0_sp.full = u[0][0] /battery_voltage * max_ocr;
+			Robot.W1_sp.full = u[1][0] /battery_voltage * max_ocr;
+			Robot.W2_sp.full = u[2][0] /battery_voltage * max_ocr;
+			Robot.W3_sp.full = u[3][0] /battery_voltage * max_ocr;
 			data = packing_data ;
 			
 		}
@@ -150,9 +150,7 @@ int main (void)
 
 ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 {
-	ioport_toggle_pin(LED_RED);
 	wireless_connection();
-	data = new_controller_loop;//communication;new_controller_loop ;
-	wireless_time_out = 0 ;	
+	data = new_controller_loop;//communication;new_controller_loop ;	
 }
 
