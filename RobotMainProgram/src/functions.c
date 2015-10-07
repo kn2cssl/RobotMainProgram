@@ -81,11 +81,11 @@ void data_transmission (void)
 {
 	//! put debug data to show arrays
 	HL show[5];
-	show[0].full = Robot.Vx_sp.full;
-	show[1].full = Robot.Vy_sp.full;
-	show[2].full = Robot.Wr_sp.full;
-	show[3].full =adc_temperature ;
-	show[4].full = timer ;
+	show[0].full = adc_bat;
+	show[1].full = adc_m1;
+	show[2].full = adc_m2;
+	show[3].full = adc_m3 ;
+	show[4].full = adc_m0 ;
 	
 	//! Debug data
 	spi_tx_buf[0]  = show[0].byte[high];
@@ -271,4 +271,28 @@ void Timer_on(void)
 void Timer_show (void)
 {
 	timer = TCE1_CNT - 17; // 17 clk is for excessive clk counted
+}
+
+void read_all_adc(void)
+{
+	//! To manually trigger adc through event channel (CH0)
+	EVSYS.DATA = 0x01;
+	EVSYS.STROBE = 0x01;
+	
+/** If statement is removed for decreeing processing time. 
+ *  First data will be zero ,but later data will be OK 
+ *  because of enough delay for later READ_ADCs
+ */
+// 	if (adc_get_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3) == (ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3) &&
+// 	adc_get_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 ) == (ADC_CH0 | ADC_CH1 ))
+// 	{
+		adc_temperature  = adc_get_result(&ADCA, ADC_CH0);
+		adc_bat          = adc_get_result(&ADCA, ADC_CH1) * 0.924 ;// 0.924 = 3.3/2048.0*100*5.734;
+		adc_m2           = adc_get_result(&ADCA, ADC_CH2);
+		adc_m3           = adc_get_result(&ADCA, ADC_CH3);
+		adc_m0           = adc_get_result(&ADCB, ADC_CH0);
+		adc_m1           = adc_get_result(&ADCB, ADC_CH1);
+		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
+		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
+//	}
 }

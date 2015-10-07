@@ -37,11 +37,13 @@
 int main (void)
 {
 	sysclk_init();   //! Initializing system clock
+	evsys_init();    //! Initializing Event system
 	pmic_init();     //! Enabling all interrupt levels
  	port_init();     //! Initializing ports
 	robot_id_set();  //! Setting robot id
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
+	adc_init();      //! Initializing ADC module
 
 	sei();
 	
@@ -117,32 +119,7 @@ int main (void)
 			ioport_set_value(LED_RED,   low);
 			ioport_set_value(LED_WHITE, low);
 			
-			// 			Timer_on();
-			// 			adc_start_conversion(&ADCA, ADC_CH0);
-			// 			adc_wait_for_interrupt_flag(&ADCA, ADC_CH0);
-			// 			adc_m2 = adc_get_result(&ADCA, ADC_CH0);
-			//
-			// 			adc_start_conversion(&ADCA, ADC_CH1);
-			// 			adc_wait_for_interrupt_flag(&ADCA, ADC_CH1);
-			// 			adc_m3 = adc_get_result(&ADCA, ADC_CH1);
-			//
-			// 			adc_start_conversion(&ADCA, ADC_CH2);
-			// 			adc_wait_for_interrupt_flag(&ADCA, ADC_CH2);
-			// 			adc_bat = adc_get_result(&ADCA, ADC_CH2)*3.31/2048*100;
-			//
-			// 			adc_start_conversion(&ADCA, ADC_CH3);
-			// 			adc_wait_for_interrupt_flag(&ADCA, ADC_CH3);
-			// 			adc_temperature = adc_get_result(&ADCA, ADC_CH3);
-			// 			Timer_show();
-
-			if (adc_get_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3) == (ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3))
-			{
-				adc_m2          = adc_get_result(&ADCA, ADC_CH0);
-				adc_m3          = adc_get_result(&ADCA, ADC_CH1);
-				adc_bat         = adc_get_result(&ADCA, ADC_CH0)*3.31/2048*100;
-				adc_temperature = adc_get_result(&ADCA, ADC_CH1);
-				adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
-			}
+			read_all_adc();
 		}
 	}
 }

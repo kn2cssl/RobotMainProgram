@@ -21,6 +21,7 @@ void data_unpacking ( void ) ;
 void free_wheel_function ( void ) ;
 void Timer_on (void) ;
 void Timer_show (void) ;
+void read_all_adc(void);
 
 #define high 1
 #define	low	 0
