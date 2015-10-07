@@ -34,18 +34,18 @@ uint16_t adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
 
 void wireless_connection ( void )
 {
-	
 	uint8_t status_L = NRF24L01_WriteReg(W_REGISTER | STATUSe, _TX_DS|_MAX_RT|_RX_DR);
 	if((status_L & _RX_DR) == _RX_DR)
 	{
-		ioport_set_value(LED_WHITE, high);//LED_White_PORT.OUTSET = LED_White_PIN_bm;
+		ioport_set_value(LED_WHITE, high);
+		wireless_time_out = 0 ;
 		wdt_reset();
-		//1) read payload through SPI,
+		//! read payload through SPI,
 		NRF24L01_Read_RX_Buf(spi_rx_buf, _Buffer_Size);
 		free_wheel=0 ;
 		if(spi_rx_buf[0] == RobotID )
 		{
-			ioport_set_value(LED_RED, high);//LED_Red_PORT.OUTSET = LED_Red_PIN_bm;
+			ioport_set_value(LED_RED, high);
 			Robot.RID				= spi_rx_buf[0];
 			Robot.Vx_sp.byte[high]  = spi_rx_buf[1];
 			Robot.Vx_sp.byte[low]	= spi_rx_buf[2];
@@ -53,11 +53,17 @@ void wireless_connection ( void )
 			Robot.Vy_sp.byte[low]	= spi_rx_buf[4];
 			Robot.Wr_sp.byte[high]  = spi_rx_buf[5];
 			Robot.Wr_sp.byte[low]	= spi_rx_buf[6];
-			Robot.alpha.byte[high]  = spi_rx_buf[7];
-			Robot.alpha.byte[low]	= spi_rx_buf[8];
-			Robot.KCK				= spi_rx_buf[9];
-			Robot.CHP				= spi_rx_buf[10];
-			Robot.ASK				= spi_rx_buf[31];//0b00000000
+			Robot.Vx.byte[high]		= spi_rx_buf[7];
+			Robot.Vx.byte[low]		= spi_rx_buf[8];
+			Robot.Vy.byte[high]		= spi_rx_buf[9];
+			Robot.Vy.byte[low]		= spi_rx_buf[10];
+			Robot.Wr.byte[high]		= spi_rx_buf[11];
+			Robot.Wr.byte[low]		= spi_rx_buf[12];
+			Robot.alpha.byte[high]  = spi_rx_buf[13];
+			Robot.alpha.byte[low]	= spi_rx_buf[14];
+			Robot.KICK				= spi_rx_buf[15];
+			Robot.CHIP				= spi_rx_buf[16];
+			Robot.SPIN				= spi_rx_buf[17];
 			data_transmission();
 		}
 		
@@ -73,12 +79,12 @@ void wireless_connection ( void )
 // run time : 2276 clk
 void data_transmission (void)
 {
-	//transmitting data to wireless board/////////////////////////////////////////////////
+	//! put debug data to show arrays
 	HL show[5];
-	show[0].full = adc_m2 ;
-	show[1].full = adc_m3 ;
-	show[2].full = adc_bat ;
-	show[3].full = adc_temperature ;
+	show[0].full = Robot.Vx_sp.full;
+	show[1].full = Robot.Vy_sp.full;
+	show[2].full = Robot.Wr_sp.full;
+	show[3].full =adc_temperature ;
 	show[4].full = timer ;
 	
 	//! Debug data
