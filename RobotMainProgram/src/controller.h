@@ -10,7 +10,7 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 #include <math.h>
-
+#include "functions.h"
 //geometric constants
 
 #define a1 56.31/180*M_PI    // 0.9827949017980069  rad
