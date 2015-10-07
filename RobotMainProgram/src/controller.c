@@ -97,6 +97,13 @@ double W [7][7] =	{	{1.0000    ,0       ,0         ,0         ,0         ,0     
 
 void setpoint_generator ( void )
 {
+	
+	//! Transferring vectors from camera's coordinate system to Robot coordinate system
+	float cos_alpha = cos(Robot.alpha.full/1000.0);
+	float sin_alpha = sin(Robot.alpha.full/1000.0);
+	Vx = (  Robot.Vx_sp.full * cos_alpha + Robot.Vy_sp.full * sin_alpha ) / 1000.0;
+	Vy = ( -Robot.Vx_sp.full * sin_alpha + Robot.Vy_sp.full * cos_alpha ) / 1000.0;
+	Wr = Robot.Wr_sp.full / 1000.0;
 	// 7 set points for system
 	//kinematics rules that should be considered for specifying desired output
 	
@@ -138,7 +145,7 @@ void state_feed_back ( void )
 		for (int j = 0 ; j < 1 ; j ++)
 		{
 			
-			//dx [i][j] = xd [i][j] - x [i][j] ;  // minus is here <<<<<=
+			dx [i][j] = xd [i][j] - x [i][j] ;  // minus is here <<<<<=
 
 		}
 	}
