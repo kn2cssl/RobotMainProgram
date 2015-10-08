@@ -16,7 +16,6 @@ double x[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ,x_OB[7][1] 
 
 double Yd[7] ;// Y desired
 
-double battery_voltage = 12.6 ;
 
 double max_ocr = 4095 ;
 
@@ -174,9 +173,9 @@ void state_feed_back ( void )
 			u [i][j] = (du [i][j] + ud [i][j]);
 			
 			//emitting saturation
-			if (fabs(u[i][j]) > battery_voltage)
+			if (fabs(u[i][j]) > Robot.bat_v.full)
 			{
-				u[i][j] = sign(u[i][j]) * battery_voltage ;
+				u[i][j] = sign(u[i][j]) * Robot.bat_v.full ;
 			}
 		}
 	}

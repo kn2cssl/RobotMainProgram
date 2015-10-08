@@ -88,8 +88,6 @@ extern double uFx[4][7] ;
 //k:state feed back	
 extern double k_sf[4][7] ;
 
-extern double battery_voltage ;
-
 extern double max_ocr ;
 
 

@@ -26,7 +26,7 @@ int wireless_time_out = 0;
 int free_wheel=0;
 HL number_of_sent_packet ={{0,0}} , number_of_received_packet ;
 enum Data_Flow data;
-struct Robot_Data Robot;
+struct Robot_Data Robot={.bat_v.full=12.6};
 
 //! ADC variables
 float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
@@ -84,7 +84,7 @@ inline void data_transmission (void)
 {
 	//! put debug data to show arrays
 	HL show[5];
-	show[0].full = battery_voltage*100;
+	show[0].full = Robot.bat_v.full*100;
 	show[1].full = adc_m1;
 	show[2].full = adc_m2;
 	show[3].full = adc_m3 ;
@@ -303,8 +303,8 @@ inline void read_all_adc(void)
 inline void battery_voltage_update(void)
 {
 	//! Low pass filter for eliminating noise and impact of current  drawing of motors and boost circuit
-	battery_voltage = (adc_bat - battery_voltage)*0.0001 + battery_voltage ;
-	if (battery_voltage < 10)
+	Robot.bat_v.full = (adc_bat - Robot.bat_v.full)*0.0001 + Robot.bat_v.full ;
+	if (Robot.bat_v.full < 10)
 	{
 		ioport_set_value(BUZZER, high);
 	}

@@ -80,10 +80,10 @@ int main (void)
 			
 			state_feed_back() ;
 			
-			Robot.W0_sp.full = u[0][0] /battery_voltage * max_ocr;
-			Robot.W1_sp.full = u[1][0] /battery_voltage * max_ocr;
-			Robot.W2_sp.full = u[2][0] /battery_voltage * max_ocr;
-			Robot.W3_sp.full = u[3][0] /battery_voltage * max_ocr;
+			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
+			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;
+			Robot.W2_sp.full = u[2][0] /Robot.bat_v.full * max_ocr;
+			Robot.W3_sp.full = u[3][0] /Robot.bat_v.full * max_ocr;
 			data = packing_data ;
 			
 		}

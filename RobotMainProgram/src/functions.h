@@ -34,6 +34,11 @@ typedef union High_Low{
 	int16_t full ;
 } HL;
 
+typedef union Float_High_Low{
+	uint8_t byte[2] ;
+	float full ;
+} FHL;
+
 struct Robot_Data
 {
 	//! Wireless data
@@ -81,7 +86,7 @@ struct Robot_Data
 	HL MCU_temperature;
 	
 	//! Battery voltage
-	HL bat_v;
+	FHL bat_v;
 	
 	//! Spin_back's speed setpoint
 	HL SB_sp	;
