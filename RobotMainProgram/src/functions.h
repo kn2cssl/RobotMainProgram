@@ -22,6 +22,7 @@ void free_wheel_function ( void ) ;
 void Timer_on (void) ;
 void Timer_show (void) ;
 void read_all_adc(void);
+void battery_voltage_update(void);
 
 #define high 1
 #define	low	 0
@@ -110,8 +111,10 @@ extern HL number_of_sent_packet  , number_of_received_packet ;
 extern enum Data_Flow data;
 extern struct Robot_Data Robot;
 
+//! ADC variables
+extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
 
 //! Test variables
-extern uint16_t adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
+
 
 #endif /* FUNCTIONS_H_ */

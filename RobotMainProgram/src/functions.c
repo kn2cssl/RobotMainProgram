@@ -28,11 +28,14 @@ HL number_of_sent_packet ={{0,0}} , number_of_received_packet ;
 enum Data_Flow data;
 struct Robot_Data Robot;
 
+//! ADC variables
+float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
+
 //! Test variables
-uint16_t adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
 
 
-void wireless_connection ( void )
+
+inline void wireless_connection ( void )
 {
 	uint8_t status_L = NRF24L01_WriteReg(W_REGISTER | STATUSe, _TX_DS|_MAX_RT|_RX_DR);
 	if((status_L & _RX_DR) == _RX_DR)
@@ -77,11 +80,11 @@ void wireless_connection ( void )
 }
 
 // run time : 2276 clk
-void data_transmission (void)
+inline void data_transmission (void)
 {
 	//! put debug data to show arrays
 	HL show[5];
-	show[0].full = adc_bat;
+	show[0].full = battery_voltage*100;
 	show[1].full = adc_m1;
 	show[2].full = adc_m2;
 	show[3].full = adc_m3 ;
@@ -126,7 +129,7 @@ void data_transmission (void)
 }
 
 // run time : 457 clk
-void data_packing ( void )
+inline void data_packing ( void )
 {
 	HL MAKsumA	;
 	HL MAKsumB	;
@@ -180,7 +183,7 @@ void data_packing ( void )
 }
 
 // run time : 60 clk
-void fpga_connection ( void )
+inline void fpga_connection ( void )
 {
 	if (packet_counter % 2 == 0)//sending
 	{
@@ -201,7 +204,7 @@ void fpga_connection ( void )
 
 
 // run time : 386 clk
-void data_unpacking (void)
+inline void data_unpacking (void)
 {
 	//unpacking data from FPGA
 	//High bytes
@@ -261,19 +264,19 @@ inline void free_wheel_function ( void )
 }
 
 //starting counter
-void Timer_on(void)
+inline void Timer_on(void)
 {
 	TCE1_CNT = 0 ;
 }
 
 //stopping counter and showing time through USART
 //running time : about 26400 clk
-void Timer_show (void)
+inline void Timer_show (void)
 {
 	timer = TCE1_CNT - 17; // 17 clk is for excessive clk counted
 }
 
-void read_all_adc(void)
+inline void read_all_adc(void)
 {
 	//! To manually trigger adc through event channel (CH0)
 	EVSYS.DATA = 0x01;
@@ -287,7 +290,7 @@ void read_all_adc(void)
 // 	adc_get_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 ) == (ADC_CH0 | ADC_CH1 ))
 // 	{
 		adc_temperature  = adc_get_result(&ADCA, ADC_CH0);
-		adc_bat          = adc_get_result(&ADCA, ADC_CH1) * 0.924 ;// 0.924 = 3.3/2048.0*100*5.734;
+		adc_bat          = adc_get_result(&ADCA, ADC_CH1) * 0.00924 ;// 0.924 = 3.3/2048.0*100*5.734;
 		adc_m2           = adc_get_result(&ADCA, ADC_CH2);
 		adc_m3           = adc_get_result(&ADCA, ADC_CH3);
 		adc_m0           = adc_get_result(&ADCB, ADC_CH0);
@@ -295,4 +298,18 @@ void read_all_adc(void)
 		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
 		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
 //	}
+}
+
+inline void battery_voltage_update(void)
+{
+	//! Low pass filter for eliminating noise and impact of current  drawing of motors and boost circuit
+	battery_voltage = (adc_bat - battery_voltage)*0.0001 + battery_voltage ;
+	if (battery_voltage < 10)
+	{
+		ioport_set_value(BUZZER, high);
+	}
+	else
+	{
+		ioport_set_value(BUZZER, low);
+	}
 }

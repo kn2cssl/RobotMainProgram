@@ -120,6 +120,7 @@ int main (void)
 			ioport_set_value(LED_WHITE, low);
 			
 			read_all_adc();
+			battery_voltage_update();
 		}
 	}
 }
