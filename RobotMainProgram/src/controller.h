@@ -70,6 +70,8 @@ void observer ( void ) ;
 
 double sign ( double number ) ;
 
+void ocr_change(void) ;
+
 extern double Vx , Vy , Wr ;
 
 extern double x[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ;

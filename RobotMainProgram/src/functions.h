@@ -70,6 +70,8 @@ struct Robot_Data
 	HL W2_sp	;
 	HL W3_sp	;
 	
+	uint8_t orc_length;
+	
 	//Wheels' speed
 	HL W0	;
 	HL W1	;
@@ -89,7 +91,7 @@ struct Robot_Data
 	FHL bat_v;
 	
 	//! Spin_back's speed setpoint
-	HL SB_sp	;
+	int8_t SB_sp	;
 	
 	//! Spin_back's speed
 	HL SB	;

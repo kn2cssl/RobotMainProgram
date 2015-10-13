@@ -26,7 +26,7 @@ int wireless_time_out = 0;
 int free_wheel=0;
 HL number_of_sent_packet ={{0,0}} , number_of_received_packet ;
 enum Data_Flow data;
-struct Robot_Data Robot={.bat_v.full=12.6};
+struct Robot_Data Robot={.bat_v.full=12.6, .orc_length=0b00010000};
 
 //! ADC variables
 float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
@@ -66,7 +66,7 @@ inline void wireless_connection ( void )
 			Robot.alpha.byte[low]	= spi_rx_buf[14];
 			Robot.KICK				= spi_rx_buf[15];
 			Robot.CHIP				= spi_rx_buf[16];
-			Robot.SPIN				= spi_rx_buf[17];
+			/*Robot.SPIN*/Robot.orc_length		= spi_rx_buf[17];//! test !!!!!!!!!!
 			data_transmission();
 		}
 		
@@ -85,9 +85,9 @@ inline void data_transmission (void)
 	//! put debug data to show arrays
 	HL show[5];
 	show[0].full = Robot.bat_v.full*100;
-	show[1].full = adc_m1;
-	show[2].full = adc_m2;
-	show[3].full = adc_m3 ;
+	show[1].full = Robot.W0.full;
+	show[2].full = max_ocr;
+	show[3].full = Robot.orc_length ;
 	show[4].full = adc_m0 ;
 	
 	//! Debug data
@@ -139,11 +139,11 @@ inline void data_packing ( void )
 	//Robot.W2_sp.full = 1000;//test !!!!!!!!!!!!!!!!!!!!!!!!!
 	//Robot.W3_sp.full = 1000;//test !!!!!!!!!!!!!!!!!!!!!!!!!
 	
-	MAKsumA.full = Robot.W0_sp.byte[high] + Robot.W1_sp.byte[high] + Robot.W2_sp.byte[high] + Robot.W3_sp.byte[high] + Robot.SB_sp.byte[high]
-	+ Robot.W0_sp.byte[low ] + Robot.W1_sp.byte[low ] + Robot.W2_sp.byte[low ] + Robot.W3_sp.byte[low ] + Robot.SB_sp.byte[low ]	;
+	MAKsumA.full = Robot.W0_sp.byte[high] + Robot.W1_sp.byte[high] + Robot.W2_sp.byte[high] + Robot.W3_sp.byte[high] + Robot.SB_sp
+	+ Robot.W0_sp.byte[low ] + Robot.W1_sp.byte[low ] + Robot.W2_sp.byte[low ] + Robot.W3_sp.byte[low ] + Robot.orc_length	;
 
-	MAKsumB.full = Robot.W0_sp.byte[high]*10 + Robot.W1_sp.byte[high]*9 + Robot.W2_sp.byte[high]*8 + Robot.W3_sp.byte[high]*7 + Robot.SB_sp.byte[high]*6
-	+ Robot.W0_sp.byte[low ]*5  + Robot.W1_sp.byte[low ]*4 + Robot.W2_sp.byte[low ]*3 + Robot.W3_sp.byte[low ]*2 + Robot.SB_sp.byte[low]	;
+	MAKsumB.full = Robot.W0_sp.byte[high]*10 + Robot.W1_sp.byte[high]*9 + Robot.W2_sp.byte[high]*8 + Robot.W3_sp.byte[high]*7 + Robot.SB_sp*6
+	+ Robot.W0_sp.byte[low ]*5  + Robot.W1_sp.byte[low ]*4 + Robot.W2_sp.byte[low ]*3 + Robot.W3_sp.byte[low ]*2 + Robot.orc_length	;
 	//in even cases micro puts data on F0 to F6 and clear data_clk pin (F7) to 0 ,so micro puts '0'+'data' on port F
 	//so there is no need for "CLK_PORT.OUTCLR = CLK_PIN ;"
 	send_packet[0]  = 0b01010101 ;	//first start sign
@@ -153,7 +153,7 @@ inline void data_packing ( void )
 	((Robot.W1_sp.byte[high]	& 0x80) >> 6) |
 	((Robot.W2_sp.byte[high]	& 0x80) >> 5) |
 	((Robot.W3_sp.byte[high]	& 0x80) >> 4) |
-	((Robot.SB_sp.byte[high]	& 0x80) >> 3) |
+	((Robot.SB_sp           	& 0x80) >> 3) |
 	((MAKsumA.byte[high]		& 0x80) >> 2) |
 	((MAKsumB.byte[high]		& 0x80) >> 1) ) & 0b01111111;
 	
@@ -161,7 +161,7 @@ inline void data_packing ( void )
 	((Robot.W1_sp.byte[low]	    & 0x80) >> 6) |
 	((Robot.W2_sp.byte[low]	    & 0x80) >> 5) |
 	((Robot.W3_sp.byte[low]	    & 0x80) >> 4) |
-	((Robot.SB_sp.byte[low]	    & 0x80) >> 3) |
+	((Robot.orc_length  	    & 0x80) >> 3) |
 	((MAKsumA.byte[low]		    & 0x80) >> 2) |
 	((MAKsumB.byte[low]		    & 0x80) >> 1) ) & 0b01111111;
 	
@@ -169,7 +169,7 @@ inline void data_packing ( void )
 	send_packet[10] = Robot.W1_sp.byte[high]		& 0b01111111 ;
 	send_packet[12] = Robot.W2_sp.byte[high]		& 0b01111111 ;
 	send_packet[14] = Robot.W3_sp.byte[high]		& 0b01111111 ;
-	send_packet[16] = Robot.SB_sp.byte[high]		& 0b01111111 ;
+	send_packet[16] = Robot.SB_sp           		& 0b01111111 ;
 	send_packet[18] = MAKsumA.byte[high]			& 0b01111111 ;
 	send_packet[20] = MAKsumB.byte[high]			& 0b01111111 ;
 	
@@ -177,7 +177,7 @@ inline void data_packing ( void )
 	send_packet[24] = Robot.W1_sp.byte[low]		    & 0b01111111 ;
 	send_packet[26] = Robot.W2_sp.byte[low]		    & 0b01111111 ;
 	send_packet[28] = Robot.W3_sp.byte[low]		    & 0b01111111 ;
-	send_packet[30] = Robot.SB_sp.byte[low]		    & 0b01111111 ;
+	send_packet[30] = Robot.orc_length  		    & 0b01111111 ;
 	send_packet[32] = MAKsumA.byte[low]			    & 0b01111111 ;
 	send_packet[34] = MAKsumB.byte[low]			    & 0b01111111 ;
 }

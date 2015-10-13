@@ -79,6 +79,8 @@ int main (void)
 			setpoint_generator() ;
 			
 			state_feed_back() ;
+
+			ocr_change();
 			
 			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
 			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;

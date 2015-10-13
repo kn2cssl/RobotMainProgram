@@ -17,7 +17,7 @@ double x[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ,x_OB[7][1] 
 double Yd[7] ;// Y desired
 
 
-double max_ocr = 4095 ;
+double max_ocr = 16383 ;
 
 
 double A [7][7] =	{	{	-53.2664	,3.7199		,0			,-0.0554	,-0.0471	,0.0471		,0.0554		}	,
@@ -269,6 +269,11 @@ double sign (double number)
 	{
 		return 0 ;
 	}
+}
+
+inline void ocr_change(void)
+{
+	max_ocr = (Robot.orc_length << 8) - 1 ;
 }
 
 
