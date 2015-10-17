@@ -31,6 +31,12 @@ struct Robot_Data Robot={.bat_v.full=12.6, .orc_length=0b00010000};
 //! ADC variables
 float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
 
+//! Time
+uint64_t seconds;
+
+//! boost & buck variables
+struct bust_buck_status bbs;
+
 //! Test variables
 
 
@@ -84,10 +90,10 @@ inline void data_transmission (void)
 {
 	//! put debug data to show arrays
 	HL show[5];
-	show[0].full = Robot.bat_v.full*100;
-	show[1].full = Robot.W0.full;
-	show[2].full = max_ocr;
-	show[3].full = Robot.orc_length ;
+	show[0].full = Robot.Vx_sp.full;
+	show[1].full = Robot.Vy_sp.full;
+	show[2].full = Robot.Wr_sp.full;
+	show[3].full = Robot.Vx.full;
 	show[4].full = adc_m0 ;
 	
 	//! Debug data
@@ -312,4 +318,55 @@ inline void battery_voltage_update(void)
 	{
 		ioport_set_value(BUZZER, low);
 	}
+}
+
+inline void every_1s(void)
+{
+	seconds++;  	
+}
+
+void boost_buck_manager(void)
+{
+  if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
+  {
+    CHARGE_PERIOD(0x77);
+    CHARGE_DUTY_CYCLE(0x5D);
+    CHARGE_START;
+  }
+  else
+  {
+    CHARGE_STOP;
+    //! Kick    
+    if ((Robot.KICK /*|| ioport_get_pin_level(BIG_BUTTON)*/) && !bbs.kick_flag && !bbs.chip_flag)
+    {
+      KICK_PERIOD(123);
+      KICK_DUTY_CYCLE(123);
+      KICK_START;
+      BOOST_BUCK_TIMER = 0;
+      bbs.kick_flag = true;
+    }
+    
+    if (bbs.kick_flag && (BOOST_BUCK_TIMER > KICK_TIME_LIMIT))
+    {
+      KICK_STOP;
+      bbs.kick_flag = false;
+    }
+    
+    //! Chip
+    if ((Robot.CHIP ||  ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag)
+    {
+      CHIP_PERIOD(123);
+      CHIP_DUTY_CYCLE(123);
+      CHIP_START;
+      BOOST_BUCK_TIMER = 0;
+      bbs.chip_flag = true;
+    }
+    
+    if (bbs.chip_flag && (BOOST_BUCK_TIMER > CHIP_TIME_LIMIT))
+    {
+      CHIP_STOP;
+      bbs.chip_flag = false;
+    }
+  }
+  
 }

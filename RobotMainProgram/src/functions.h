@@ -10,6 +10,7 @@
 #define FUNCTIONS_H_
 
 #include <asf.h>
+#include "init.h"
 #include "nrf24l01.h"
 #include "controller.h"
 
@@ -23,9 +24,16 @@ void Timer_on (void) ;
 void Timer_show (void) ;
 void read_all_adc(void);
 void battery_voltage_update(void);
+void every_1s(void);
+void boost_buck_manager(void);
 
 #define high 1
 #define	low	 0
+
+#define KICK_TIME_LIMIT 30
+#define CHIP_TIME_LIMIT 30
+#define BOOST_BUCK_TIMER TCF0_CNT
+
 
 enum Data_Flow {new_wireless_data , new_jyro_data , new_controller_loop , packing_data , communication , unpacking_data , other_programs };
 
@@ -120,6 +128,17 @@ extern struct Robot_Data Robot;
 
 //! ADC variables
 extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
+
+//! Time
+extern uint64_t seconds;
+
+//! boost & buck variables
+struct bust_buck_status
+{
+  bool failure;
+  bool kick_flag;
+  bool chip_flag;
+};
 
 //! Test variables
 
