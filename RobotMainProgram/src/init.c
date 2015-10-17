@@ -72,8 +72,10 @@ void robot_id_set(void)
 
 void evsys_init(void)
 {
-	sysclk_enable_module(SYSCLK_PORT_GEN, SYSCLK_EVSYS);
-	EVSYS.CH3MUX = EVSYS_CHMUX_PORTD_PIN2_gc;
+  sysclk_enable_module(SYSCLK_PORT_GEN, SYSCLK_EVSYS);
+  //EVSYS.CH3MUX = EVSYS_CHMUX_PORTD_PIN2_gc; If it is needed to trig adc from NRF24L01 IRQ
+  EVSYS.CH1MUX = EVSYS_CHMUX_TCD1_OVF_gc;
+  EVSYS.CH2MUX = EVSYS_CHMUX_TCE0_OVF_gc;
 }
 
 void adc_init(void)
@@ -124,10 +126,71 @@ void adc_init(void)
 	
 }
 
-//static void tc_init(void)
-//{
-	//tc_enable(&MY_TIMER);
-	//tc_set_wgm(&MY_TIMER, TC_WG_NORMAL);
-	//tc_write_period(&MY_TIMER, 200);
-	//tc_set_resolution(&MY_TIMER, 2000);
-//}
+
+void tc_init(void)
+{
+  /* Boost & buck pins:
+   * charge : C2
+   *
+   */
+  tc_enable(&TCC0);
+  tc_set_wgm(&TCC0, TC_WG_SS);
+  //tc_write_period(&TCC0, 0x77);
+  #define CHARGE_PERIOD(_A_) tc_write_period(&TCC0, _A_)
+  #define KICK_PERIOD(_A_)   tc_write_period(&TCC0, _A_)
+  //tc_write_cc(&TCC0, TC_CCC, 0x5D);
+  #define CHARGE_DUTY_CYCLE(_A_) tc_write_cc(&TCC0, TC_CCC, _A_)
+  //tc_write_cc(&TCC0, TC_CCD, 0x5D);
+  #define KICK_DUTY_CYCLE(_A_)   tc_write_cc(&TCC0, TC_CCD, _A_)
+  //tc_enable_cc_channels(&TCC0,TC_CCCEN); CHIP
+  #define CHARGE_START tc_enable_cc_channels(&TCC0,TC_CCCEN)
+  #define CHARGE_STOP  tc_disable_cc_channels(&TCC0,TC_CCCEN)
+  //tc_enable_cc_channels(&TCC0,TC_CCDEN); KICK
+  #define KICK_START   tc_enable_cc_channels(&TCC0,TC_CCDEN)
+  #define KICK_STOP   tc_disable_cc_channels(&TCC0,TC_CCDEN)
+  tc_write_clock_source(&TCC0, TC_CLKSEL_DIV64_gc);
+  
+  
+  //! Charge : pin C4 (kick)
+  tc_enable(&TCC1);
+  tc_set_wgm(&TCC1, TC_WG_SS);
+  //tc_write_period(&TCC1, 0x77);
+  #define CHIP_PERIOD(_A_) tc_write_period(&TCC1, _A_)
+  tc_write_cc(&TCC1, TC_CCA, 0x5D);
+  #define  CHIP_DUTY_CYCLE(_A_) tc_write_cc(&TCC1, TC_CCA, _A_)
+  //tc_enable_cc_channels(&TCC1,TC_CCAEN);
+  #define CHIP_START tc_enable_cc_channels(&TCC1,TC_CCAEN)
+  #define CHIP_STOP tc_disable_cc_channels(&TCC1,TC_CCAEN)
+  tc_write_clock_source(&TCC1, TC_CLKSEL_DIV64_gc);
+  
+  //! Clock : 1s
+  tc_enable(&TCD0);
+  tc_set_overflow_interrupt_callback(&TCD0, every_1s);
+  tc_set_wgm(&TCD0, TC_WG_NORMAL);
+  tc_write_period(&TCD0, 31250);
+  tc_set_overflow_interrupt_level(&TCD0, TC_INT_LVL_LO);
+  tc_write_clock_source(&TCD0, TC_CLKSEL_DIV1024_gc);
+  
+  //! Boost & buck circuit timer : 1ms
+  tc_enable(&TCD1);
+  tc_set_wgm(&TCD1, TC_WG_NORMAL);
+  tc_write_period(&TCD1, 500);
+  tc_write_clock_source(&TCD1, TC_CLKSEL_DIV64_gc);//! Overflow every 1ms
+  
+  tc_enable(&TCF0);
+  tc_set_wgm(&TCF0, TC_WG_NORMAL);
+  tc_write_period(&TCF0, 0xFFFF);
+  tc_write_clock_source(&TCF0, TC_CLKSEL_EVCH1_gc);//! Frequency of EVENT_CHANEL1 = 1kHz
+  
+  //! Functions timing
+  tc_enable(&TCE0);
+  tc_set_wgm(&TCE0, TC_WG_NORMAL);
+  tc_write_period(&TCE0, 0xFFFF);
+  tc_write_clock_source(&TCE0, TC_CLKSEL_DIV1_gc);
+  
+  tc_enable(&TCE1);
+  tc_set_wgm(&TCE1, TC_WG_NORMAL);
+  tc_write_period(&TCE1, 0xFFFF);
+  tc_write_clock_source(&TCE1, TC_CLKSEL_EVCH2_gc);
+	
+}
