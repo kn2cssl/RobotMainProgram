@@ -44,6 +44,7 @@ int main (void)
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
+	tc_init();       
 
 	sei();
 	
@@ -63,14 +64,12 @@ int main (void)
 		// run time : about 19115 clk
 		if (data == new_controller_loop)
 		{
-			Timer_show();
-			Timer_on();
 			Vx = Robot.Vx_sp.full / 1000.0 ;
 			Vy = Robot.Vy_sp.full / 1000.0 ;
 			Wr = Robot.Wr_sp.full / 1000.0 ;
-			x[0][0] = Robot.Vx.full/1000.0 ;
-			x[1][0] = Robot.Vy.full/1000.0 ;
-			x[2][0] = Robot.Wr.full/1000.0 ;
+			x[0][0] = Robot.Vx.full / 1000.0 ;
+			x[1][0] = Robot.Vy.full / 1000.0 ;
+			x[2][0] = Robot.Wr.full / 1000.0 ;
 			x[3][0] = Robot.W0.full ;
 			x[4][0] = Robot.W1.full ;
 			x[5][0] = Robot.W2.full ;
@@ -82,10 +81,10 @@ int main (void)
 
 			ocr_change();
 			
-			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = u[3][0] /Robot.bat_v.full * max_ocr;
+			Robot.W0_sp.full = Robot.Vx_sp.full;//u[0][0] /Robot.bat_v.full * max_ocr;
+			Robot.W1_sp.full = Robot.Vy_sp.full;//u[1][0] /Robot.bat_v.full * max_ocr;
+			Robot.W2_sp.full = Robot.Wr_sp.full;//u[2][0] /Robot.bat_v.full * max_ocr;
+			Robot.W3_sp.full = Robot.Vx.full;//u[3][0] /Robot.bat_v.full * max_ocr;
 			data = packing_data ;
 			
 		}
@@ -123,6 +122,10 @@ int main (void)
 			
 			read_all_adc();
 			battery_voltage_update();
+      
+			boost_buck_manager();
+
+
 		}
 	}
 }

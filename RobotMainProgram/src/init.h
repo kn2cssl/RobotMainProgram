@@ -11,7 +11,6 @@
 
 #include "nrf24l01.h"
 #include <asf.h>
-#include <conf_board.h>
 #include "functions.h"
 
 #define CHARGE_PERIOD(_A_) tc_write_period(&TCC0, _A_)

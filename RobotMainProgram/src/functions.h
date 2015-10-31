@@ -30,8 +30,8 @@ void boost_buck_manager(void);
 #define high 1
 #define	low	 0
 
-#define KICK_TIME_LIMIT 30
-#define CHIP_TIME_LIMIT 30
+#define KICK_TIME_LIMIT 40//! What should it be??
+#define CHIP_TIME_LIMIT 10//! What should it be??
 #define BOOST_BUCK_TIMER TCF0_CNT
 
 
@@ -136,8 +136,10 @@ extern uint64_t seconds;
 struct bust_buck_status
 {
   bool failure;
+  bool charge_flag;
   bool kick_flag;
   bool chip_flag;
+  uint16_t charge_counter;
 };
 
 //! Test variables

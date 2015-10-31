@@ -131,36 +131,18 @@ void tc_init(void)
 {
   /* Boost & buck pins:
    * charge : C2
-   *
+   *(other TC settings should be done according to the type of use )
    */
   tc_enable(&TCC0);
   tc_set_wgm(&TCC0, TC_WG_SS);
-  //tc_write_period(&TCC0, 0x77);
-  #define CHARGE_PERIOD(_A_) tc_write_period(&TCC0, _A_)
-  #define KICK_PERIOD(_A_)   tc_write_period(&TCC0, _A_)
-  //tc_write_cc(&TCC0, TC_CCC, 0x5D);
-  #define CHARGE_DUTY_CYCLE(_A_) tc_write_cc(&TCC0, TC_CCC, _A_)
-  //tc_write_cc(&TCC0, TC_CCD, 0x5D);
-  #define KICK_DUTY_CYCLE(_A_)   tc_write_cc(&TCC0, TC_CCD, _A_)
-  //tc_enable_cc_channels(&TCC0,TC_CCCEN); CHIP
-  #define CHARGE_START tc_enable_cc_channels(&TCC0,TC_CCCEN)
-  #define CHARGE_STOP  tc_disable_cc_channels(&TCC0,TC_CCCEN)
-  //tc_enable_cc_channels(&TCC0,TC_CCDEN); KICK
-  #define KICK_START   tc_enable_cc_channels(&TCC0,TC_CCDEN)
-  #define KICK_STOP   tc_disable_cc_channels(&TCC0,TC_CCDEN)
   tc_write_clock_source(&TCC0, TC_CLKSEL_DIV64_gc);
   
-  
-  //! Charge : pin C4 (kick)
+ 
+  /** Charge : pin C4 (kick)
+	* (other TC settings should be done according to the type of use )
+	*/
   tc_enable(&TCC1);
   tc_set_wgm(&TCC1, TC_WG_SS);
-  //tc_write_period(&TCC1, 0x77);
-  #define CHIP_PERIOD(_A_) tc_write_period(&TCC1, _A_)
-  tc_write_cc(&TCC1, TC_CCA, 0x5D);
-  #define  CHIP_DUTY_CYCLE(_A_) tc_write_cc(&TCC1, TC_CCA, _A_)
-  //tc_enable_cc_channels(&TCC1,TC_CCAEN);
-  #define CHIP_START tc_enable_cc_channels(&TCC1,TC_CCAEN)
-  #define CHIP_STOP tc_disable_cc_channels(&TCC1,TC_CCAEN)
   tc_write_clock_source(&TCC1, TC_CLKSEL_DIV64_gc);
   
   //! Clock : 1s
