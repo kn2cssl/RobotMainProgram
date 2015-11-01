@@ -90,8 +90,8 @@ inline void data_transmission (void)
 {
 	//! put debug data to show arrays
 	HL show[4];
-	show[0].full = Robot.nsp;
-	show[1].full = Robot.nrp;
+	show[0].full = bbs.failure;Robot.nsp;
+	show[1].full = BOOST_BUCK_TIMER;Robot.nrp;
 	show[2].full = Robot.ss;
 	show[3].full = Robot.bat_v.full*100;
 	
@@ -336,66 +336,89 @@ inline void every_250ms(void)
 
 void boost_buck_manager(void)
 {
-	//! calculating charge time
-	if (ioport_get_pin_level(CHARGE_LIMIT))
+	if (!bbs.failure)
 	{
-		if (bbs.charge_flag)
+		//! calculating charging time
+		if (ioport_get_pin_level(CHARGE_LIMIT))
 		{
-			bbs.charge_counter++;
-			if (bbs.charge_counter>4000)
+			if (bbs.charge_flag)
 			{
-				Timer_show() ;
-				bbs.charge_counter = 0 ;
-				bbs.charge_flag = false ;
+				bbs.charge_counter++;
+				if (bbs.charge_counter>4000)
+				{
+					bbs.charge_counter = 0 ;
+					bbs.charge_flag = false ;
+					bbs.charging_time = BOOST_BUCK_TIMER ;
+					BOOST_BUCK_TIMER = 0 ;
+				}
+			}
+				
+		}
+			
+		if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
+		{
+			CHARGE_PERIOD(47);
+			CHARGE_DUTY_CYCLE(36);
+			CHARGE_START;
+			
+			if (BOOST_BUCK_TIMER > MAX_CHARGING_TIME)
+			{
+				bbs.failure = true ;
 			}
 		}
-		
+		else
+		{
+			CHARGE_STOP;
+				
+			//! Kick
+			if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag)
+			{
+				KICK_PERIOD(123);
+				KICK_DUTY_CYCLE(123);
+				KICK_START;
+				BOOST_BUCK_TIMER = 0;
+				bbs.kick_flag = true;
+			}
+				
+			if (bbs.kick_flag && (BOOST_BUCK_TIMER > KICK_TIME_LIMIT))
+			{
+				KICK_STOP;
+				BOOST_BUCK_TIMER = 0;
+				bbs.kick_flag = false;
+				bbs.charge_flag = true;
+			}
+				
+			//! Chip
+			if (Robot.CHIP && !bbs.kick_flag && !bbs.chip_flag)
+			{
+				CHIP_PERIOD(123);
+				CHIP_DUTY_CYCLE(123);
+				CHIP_START;
+				BOOST_BUCK_TIMER = 0;
+				bbs.chip_flag = true;
+			}
+				
+			if (bbs.chip_flag && (BOOST_BUCK_TIMER > CHIP_TIME_LIMIT))
+			{
+				CHIP_STOP;
+				BOOST_BUCK_TIMER = 0;
+				bbs.chip_flag = false;
+				bbs.charge_flag = true;
+			}
+		}
+	}
+	else
+	{
+		CHARGE_STOP;
+		KICK_STOP;
+		CHIP_STOP;
+		if (BOOST_BUCK_TIMER > 1000)
+		{
+			ioport_toggle_pin(BUZZER);
+			BOOST_BUCK_TIMER = 0;
+		}
 		
 	}
-	
-  if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
-  {
-    CHARGE_PERIOD(47);
-    CHARGE_DUTY_CYCLE(36);
-    CHARGE_START;
-  }
-  else
-  {
-    CHARGE_STOP;
-    //! Kick    
-    if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag)
-    {
-      KICK_PERIOD(123);
-      KICK_DUTY_CYCLE(123);
-      KICK_START;
-      BOOST_BUCK_TIMER = 0;
-      bbs.kick_flag = true;
-    }
-    
-    if (bbs.kick_flag && (BOOST_BUCK_TIMER > KICK_TIME_LIMIT))
-    {
-      KICK_STOP;
-	  Timer_on();
-      bbs.kick_flag = false;
-	  bbs.charge_flag = true;
-    }
-    
-    //! Chip
-    if (Robot.CHIP && !bbs.kick_flag && !bbs.chip_flag)
-    {
-      CHIP_PERIOD(123);
-      CHIP_DUTY_CYCLE(123);
-      CHIP_START;
-      BOOST_BUCK_TIMER = 0;
-      bbs.chip_flag = true;
-    }
-    
-    if (bbs.chip_flag && (BOOST_BUCK_TIMER > CHIP_TIME_LIMIT))
-    {
-      CHIP_STOP;
-      bbs.chip_flag = false;
-	  bbs.charge_flag = true;
-    }
-  }
+
   
 }

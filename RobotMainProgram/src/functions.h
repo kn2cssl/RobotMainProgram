@@ -32,6 +32,7 @@ void boost_buck_manager(void);
 
 #define KICK_TIME_LIMIT 40//! What should it be??
 #define CHIP_TIME_LIMIT 10//! What should it be??
+#define MAX_CHARGING_TIME 3000//! 3 seconds
 #define BOOST_BUCK_TIMER TCF0_CNT
 #define WIRLESS_TIMEOUT_TIMER RTC.CNT
 
@@ -116,6 +117,9 @@ struct Robot_Data
 	//! Number of received packet from Atxmega64 to SPARTAN3
 	uint8_t nrp;
 	
+	// Charging time of boost circuit
+	uint8_t ct;
+	
 };
 
 //! FPGA connection variables
@@ -151,6 +155,7 @@ struct bust_buck_status
   bool kick_flag;
   bool chip_flag;
   uint16_t charge_counter;
+  uint8_t charging_time;
 };
 
 //! Test variables
