@@ -19,11 +19,12 @@ char spi_rx_buf[_Buffer_Size] ;
 char spi_tx_buf[_Buffer_Size];
 char Address[_Address_Width] = { 0x11, 0x22, 0x33, 0x44, 0x55};
 
+//! Wireless monitoring
+uint8_t signal_strength;
 
 //! System variables
 int summer=0;
 bool free_wheel = false;
-uint8_t signal_strength;
 uint8_t number_of_sent_packet , number_of_received_packet ;
 enum Data_Flow data = d;
 struct Robot_Data Robot={.bat_v.full=12.6, .orc_length=0b00010000};
@@ -38,7 +39,7 @@ uint64_t seconds;
 struct bust_buck_status bbs;
 
 //! Test variables
-
+int test = 0;
 inline void wireless_connection ( void )
 {
 	uint8_t status_L = NRF24L01_WriteReg(W_REGISTER | STATUSe, _TX_DS|_MAX_RT|_RX_DR);
@@ -127,7 +128,7 @@ inline void data_transmission (void)
 	spi_tx_buf[28] = Robot.nsp ;
 	spi_tx_buf[29] = Robot.nrp ;
 	spi_tx_buf[30] = Robot.ss  ;
-	spi_tx_buf[31] = 0;//! reserved
+	spi_tx_buf[31] = Robot.wrc ;
 	
 	NRF24L01_Write_TX_Buf(spi_tx_buf, _Buffer_Size);
 }

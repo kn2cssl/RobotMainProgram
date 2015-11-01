@@ -59,6 +59,7 @@ int main (void)
 			free_wheel = 1 ;
 			WIRLESS_TIMEOUT_TIMER = 0;
 			data = new_controller_loop ;//for sending free wheel order to fpga
+			Robot.wrc ++;
 		}
 
 		// run time : about 19115 clk

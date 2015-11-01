@@ -107,6 +107,8 @@ struct Robot_Data
 	
 	//! wireless signal_strength
 	uint8_t ss;
+	//! wireless_reset_counter
+	uint8_t wrc; 
 	
 	//! SPARTAN3 & Atxmega64 signal_strength
 	//! Number of sent packet from Atxmega64 to SPARTAN3
@@ -152,6 +154,6 @@ struct bust_buck_status
 };
 
 //! Test variables
-
+extern int test ;
 
 #endif /* FUNCTIONS_H_ */
