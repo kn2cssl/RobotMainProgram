@@ -90,8 +90,8 @@ inline void data_transmission (void)
 {
 	//! put debug data to show arrays
 	HL show[4];
-	show[0].full = bbs.failure;Robot.nsp;
-	show[1].full = BOOST_BUCK_TIMER;Robot.nrp;
+	show[0].full = Robot.nsp;
+	show[1].full = Robot.nrp;
 	show[2].full = Robot.ss;
 	show[3].full = Robot.bat_v.full*100;
 	

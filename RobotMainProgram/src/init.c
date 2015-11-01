@@ -149,7 +149,7 @@ void tc_init(void)
   tc_enable(&TCD0);
   tc_set_overflow_interrupt_callback(&TCD0, every_250ms);
   tc_set_wgm(&TCD0, TC_WG_NORMAL);
-  tc_write_period(&TCD0, 3125);
+  tc_write_period(&TCD0, 31250);
   tc_set_overflow_interrupt_level(&TCD0, TC_INT_LVL_LO);
   tc_write_clock_source(&TCD0, TC_CLKSEL_DIV256_gc);
   

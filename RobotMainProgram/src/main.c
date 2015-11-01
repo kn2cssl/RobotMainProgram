@@ -82,10 +82,10 @@ int main (void)
 
 			ocr_change();
 			
-			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = u[3][0] /Robot.bat_v.full * max_ocr;
+			Robot.W0_sp.full = Robot.Vx_sp.full;//u[0][0] /Robot.bat_v.full * max_ocr;
+			Robot.W1_sp.full = Robot.Vy_sp.full;//u[1][0] /Robot.bat_v.full * max_ocr;
+			Robot.W2_sp.full = Robot.Wr_sp.full;//u[2][0] /Robot.bat_v.full * max_ocr;
+			Robot.W3_sp.full = Robot.Vx.full;//u[3][0] /Robot.bat_v.full * max_ocr;
 			data = packing_data ;
 			
 		}
