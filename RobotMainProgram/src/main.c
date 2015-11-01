@@ -44,7 +44,8 @@ int main (void)
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
-	tc_init();       
+	tc_init();    
+	rtc_init();   
 
 	sei();
 	
@@ -52,11 +53,11 @@ int main (void)
 	while(1)
 	{
 
-		if (wireless_time_out >= 1)
+		if (WIRLESS_TIMEOUT_TIMER >= 10)
 		{
 			nrf_init () ;
 			free_wheel = 1 ;
-			wireless_time_out = 0 ;
+			WIRLESS_TIMEOUT_TIMER = 0;
 			data = new_controller_loop ;//for sending free wheel order to fpga
 		}
 

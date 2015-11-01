@@ -33,6 +33,7 @@ void boost_buck_manager(void);
 #define KICK_TIME_LIMIT 40//! What should it be??
 #define CHIP_TIME_LIMIT 10//! What should it be??
 #define BOOST_BUCK_TIMER TCF0_CNT
+#define WIRLESS_TIMEOUT_TIMER RTC.CNT
 
 
 enum Data_Flow {new_wireless_data , new_jyro_data , new_controller_loop , packing_data , communication , unpacking_data , other_programs };
@@ -129,7 +130,6 @@ extern char Address[_Address_Width];
 
 //! System variables
 extern int summer;
-extern int wireless_time_out ;
 extern bool free_wheel;
 extern uint8_t number_of_sent_packet  , number_of_received_packet ;
 extern enum Data_Flow data;

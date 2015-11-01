@@ -22,7 +22,6 @@ char Address[_Address_Width] = { 0x11, 0x22, 0x33, 0x44, 0x55};
 
 //! System variables
 int summer=0;
-int wireless_time_out = 0;
 bool free_wheel = false;
 uint8_t signal_strength;
 uint8_t number_of_sent_packet , number_of_received_packet ;
@@ -46,7 +45,7 @@ inline void wireless_connection ( void )
 	if((status_L & _RX_DR) == _RX_DR)
 	{
 		ioport_set_value(LED_WHITE, high);
-		wireless_time_out = 0 ;
+		WIRLESS_TIMEOUT_TIMER = 0;
 		wdt_reset();
 		//! read payload through SPI,
 		NRF24L01_Read_RX_Buf(spi_rx_buf, _Buffer_Size);
@@ -323,7 +322,6 @@ inline void battery_voltage_update(void)
 inline void every_250ms(void)
 {
 	seconds++;  
-	wireless_time_out ++ ;
 	
 	//! Monitoring
     Robot.nsp = number_of_sent_packet;
