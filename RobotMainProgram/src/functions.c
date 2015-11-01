@@ -23,9 +23,10 @@ char Address[_Address_Width] = { 0x11, 0x22, 0x33, 0x44, 0x55};
 //! System variables
 int summer=0;
 int wireless_time_out = 0;
-int free_wheel=0;
-HL number_of_sent_packet ={{0,0}} , number_of_received_packet ;
-enum Data_Flow data;
+bool free_wheel = false;
+uint8_t signal_strength;
+uint8_t number_of_sent_packet , number_of_received_packet ;
+enum Data_Flow data = d;
 struct Robot_Data Robot={.bat_v.full=12.6, .orc_length=0b00010000};
 
 //! ADC variables
@@ -72,6 +73,7 @@ inline void wireless_connection ( void )
 			Robot.CHIP				= spi_rx_buf[16];
 			/*Robot.SPIN*/Robot.orc_length		= spi_rx_buf[17];//! test !!!!!!!!!!
 			data_transmission();
+			signal_strength++;
 		}
 		
 	}
@@ -87,12 +89,11 @@ inline void wireless_connection ( void )
 inline void data_transmission (void)
 {
 	//! put debug data to show arrays
-	HL show[5];
-	show[0].full = number_of_sent_packet.full;
-	show[1].full = Robot.bat_v.full*100;
-	show[2].full = Robot.W0.full;
-	show[3].full = Robot.KICK;
-	show[4].full = Robot.orc_length ;
+	HL show[4];
+	show[0].full = Robot.nsp;
+	show[1].full = Robot.nrp;
+	show[2].full = Robot.ss;
+	show[3].full = Robot.bat_v.full*100;
 	
 	//! Debug data
 	spi_tx_buf[0]  = show[0].byte[high];
@@ -124,10 +125,10 @@ inline void data_transmission (void)
 	spi_tx_buf[25] = Robot.MCU_temperature.byte[low];
 	spi_tx_buf[26] = Robot.bat_v.byte[high];
 	spi_tx_buf[27] = Robot.bat_v.byte[low];
-	spi_tx_buf[28] = number_of_sent_packet.byte[high] ;
-	spi_tx_buf[29] = number_of_sent_packet.byte[low] ;
-	spi_tx_buf[30] = number_of_received_packet.byte[high];
-	spi_tx_buf[31] = number_of_received_packet.byte[low];
+	spi_tx_buf[28] = Robot.nsp ;
+	spi_tx_buf[29] = Robot.nrp ;
+	spi_tx_buf[30] = Robot.ss  ;
+	spi_tx_buf[31] = 0;//! reserved
 	
 	NRF24L01_Write_TX_Buf(spi_tx_buf, _Buffer_Size);
 }
@@ -201,7 +202,7 @@ inline void fpga_connection ( void )
 
 	if (packet_counter == 35)
 	{
-		number_of_sent_packet.full ++ ;
+		number_of_sent_packet ++ ;
 		data = unpacking_data ;
 	}
 }
@@ -247,7 +248,7 @@ inline void data_unpacking (void)
 		Robot.W2.full = temp_data[2].full ;
 		Robot.W3.full = temp_data[3].full ;
 		Robot.SB.full = temp_data[4].full ;
-		number_of_received_packet.full ++ ;
+		number_of_received_packet ++ ;
 	}
 }
 
@@ -319,9 +320,18 @@ inline void battery_voltage_update(void)
 	}
 }
 
-inline void every_1s(void)
+inline void every_250ms(void)
 {
-	seconds++;  	
+	seconds++;  
+	wireless_time_out ++ ;
+	
+	//! Monitoring
+    Robot.nsp = number_of_sent_packet;
+    Robot.nrp = number_of_received_packet;
+    Robot.ss = signal_strength;
+	number_of_sent_packet = 0;
+	number_of_received_packet = 0;
+	signal_strength = 0;	
 }
 
 

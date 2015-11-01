@@ -24,7 +24,7 @@ void Timer_on (void) ;
 void Timer_show (void) ;
 void read_all_adc(void);
 void battery_voltage_update(void);
-void every_1s(void);
+void every_250ms(void);
 void boost_buck_manager(void);
 
 #define high 1
@@ -104,6 +104,15 @@ struct Robot_Data
 	//! Spin_back's speed
 	HL SB	;
 	
+	//! wireless signal_strength
+	uint8_t ss;
+	
+	//! SPARTAN3 & Atxmega64 signal_strength
+	//! Number of sent packet from Atxmega64 to SPARTAN3
+	uint8_t nsp;
+	//! Number of received packet from Atxmega64 to SPARTAN3
+	uint8_t nrp;
+	
 };
 
 //! FPGA connection variables
@@ -121,8 +130,8 @@ extern char Address[_Address_Width];
 //! System variables
 extern int summer;
 extern int wireless_time_out ;
-extern int free_wheel;
-extern HL number_of_sent_packet  , number_of_received_packet ;
+extern bool free_wheel;
+extern uint8_t number_of_sent_packet  , number_of_received_packet ;
 extern enum Data_Flow data;
 extern struct Robot_Data Robot;
 

@@ -52,14 +52,13 @@ int main (void)
 	while(1)
 	{
 
-		if (wireless_time_out > 32000)
+		if (wireless_time_out >= 1)
 		{
 			nrf_init () ;
 			free_wheel = 1 ;
 			wireless_time_out = 0 ;
-			data = packing_data ;//for sending free wheel order to fpga
+			data = new_controller_loop ;//for sending free wheel order to fpga
 		}
-		wireless_time_out ++ ;
 
 		// run time : about 19115 clk
 		if (data == new_controller_loop)
@@ -81,10 +80,10 @@ int main (void)
 
 			ocr_change();
 			
-			Robot.W0_sp.full = Robot.Vx_sp.full;//u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = Robot.Vy_sp.full;//u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = Robot.Wr_sp.full;//u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = Robot.Vx.full;//u[3][0] /Robot.bat_v.full * max_ocr;
+			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
+			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;
+			Robot.W2_sp.full = u[2][0] /Robot.bat_v.full * max_ocr;
+			Robot.W3_sp.full = u[3][0] /Robot.bat_v.full * max_ocr;
 			data = packing_data ;
 			
 		}
@@ -125,7 +124,7 @@ int main (void)
       
 			boost_buck_manager();
 
-
+			data = new_controller_loop;
 		}
 	}
 }
