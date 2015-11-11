@@ -66,37 +66,36 @@ double G[7][7]	=	{	{	157.51		,0			,0			,-0.0010	,-0.0008	,0.0008		,0.0010		}	,
 {	4196.5		,2890.4     ,2617.5		,-0.0765    ,-0.1957    ,0.0390     ,0.1997		}	}	;
 
 
-#ifdef after_RLS_set_up
-
-double G[7][7] =
-{ { 157.15  ,0  ,0  ,-0.0009  ,-0.0008   ,0.0008   ,0.0009	}
-0       ,166.78       ,170.28    ,0.0006  ,-0.0008  ,-0.0008    ,0.0006
-0       ,6.8113        ,840.2   ,0  ,0  ,0   ,0
-,-3792       2610.8       2372.7      0.17911     0.035114     -0.17546    -0.068673
-,-3222.5      -3321.7      -2102.4     0.035114      0.17891  -4.5871e-05     -0.17546
-,3222.5      -3321.7      -2102.4     -0.17546  -4.5871e-05      0.17891     0.035114
-,3792       2610.8       2372.7    -0.068673     -0.17546     0.035114      0.17911
-
-double V [7][7]   =	{	{0.0000    ,0       ,0         ,0         ,0         ,0         ,0		 }	,
-{0         ,0.0000  ,0         ,0         ,0         ,0         ,0		 }	,
-{0         ,0		,0.0000    ,0         ,0         ,0         ,0		 }	,
-{0         ,0       ,0		   ,100.0000  ,0         ,0         ,0		 }	,
-{0         ,0       ,0         ,0		  ,100.0000  ,0         ,0		 }	,
-{0         ,0       ,0         ,0         ,0		 ,100.000   ,0		 }	,
-{0         ,0       ,0         ,0         ,0         ,0			,100.0000}	}	;
-
-double W [7][7] =	{	{1.0000    ,0       ,0         ,0         ,0         ,0         ,0		 }	,
-{0         ,1.0000  ,0         ,0         ,0         ,0         ,0		 }	,
-{0         ,0		,1.0000    ,0         ,0         ,0         ,0		 }	,
-{0         ,0       ,0		   ,0.0100	  ,0         ,0         ,0		 }	,
-{0         ,0       ,0         ,0		  ,0.0100    ,0         ,0		 }	,
-{0         ,0       ,0         ,0         ,0		 ,0.010     ,0		 }	,
-{0         ,0       ,0         ,0         ,0         ,0			,0.010   }	}	;
-#endif
+// #ifdef after_RLS_set_up
+// 
+// double G[7][7] =
+// { { 157.15  ,0  ,0  ,-0.0009  ,-0.0008   ,0.0008   ,0.0009	}
+// 0       ,166.78       ,170.28    ,0.0006  ,-0.0008  ,-0.0008    ,0.0006
+// 0       ,6.8113        ,840.2   ,0  ,0  ,0   ,0
+// ,-3792       2610.8       2372.7      0.17911     0.035114     -0.17546    -0.068673
+// ,-3222.5      -3321.7      -2102.4     0.035114      0.17891  -4.5871e-05     -0.17546
+// ,3222.5      -3321.7      -2102.4     -0.17546  -4.5871e-05      0.17891     0.035114
+// ,3792       2610.8       2372.7    -0.068673     -0.17546     0.035114      0.17911
+// 
+// double V [7][7]   =	{	{0.0000    ,0       ,0         ,0         ,0         ,0         ,0		 }	,
+// {0         ,0.0000  ,0         ,0         ,0         ,0         ,0		 }	,
+// {0         ,0		,0.0000    ,0         ,0         ,0         ,0		 }	,
+// {0         ,0       ,0		   ,100.0000  ,0         ,0         ,0		 }	,
+// {0         ,0       ,0         ,0		  ,100.0000  ,0         ,0		 }	,
+// {0         ,0       ,0         ,0         ,0		 ,100.000   ,0		 }	,
+// {0         ,0       ,0         ,0         ,0         ,0			,100.0000}	}	;
+// 
+// double W [7][7] =	{	{1.0000    ,0       ,0         ,0         ,0         ,0         ,0		 }	,
+// {0         ,1.0000  ,0         ,0         ,0         ,0         ,0		 }	,
+// {0         ,0		,1.0000    ,0         ,0         ,0         ,0		 }	,
+// {0         ,0       ,0		   ,0.0100	  ,0         ,0         ,0		 }	,
+// {0         ,0       ,0         ,0		  ,0.0100    ,0         ,0		 }	,
+// {0         ,0       ,0         ,0         ,0		 ,0.010     ,0		 }	,
+// {0         ,0       ,0         ,0         ,0         ,0			,0.010   }	}	;
+// #endif
 
 void setpoint_generator ( void )
 {
-	
 	//! Transferring vectors from camera's coordinate system to Robot coordinate system
 	float cos_alpha = cos(Robot.alpha.full/1000.0);
 	float sin_alpha = sin(Robot.alpha.full/1000.0);
@@ -114,6 +113,29 @@ void setpoint_generator ( void )
 	xd[4][0] = (-Vx*sina2+Vy*cosa2+Wr*cosg2*d)*b ;
 	xd[5][0] = (-Vx*sina3+Vy*cosa3+Wr*cosg3*d)*b ;
 	xd[6][0] = (-Vx*sina4+Vy*cosa4+Wr*cosg4*d)*b ;
+	
+	// data checking 1 : data is produced correctly (checked with model in MATLAB)
+}
+
+void state_generator ( void )
+{
+	//! Transferring vectors from camera's coordinate system to Robot coordinate system
+	float cos_alpha = cos(Robot.alpha.full/1000.0);
+	float sin_alpha = sin(Robot.alpha.full/1000.0);
+	Vx = (  Robot.Vx.full * cos_alpha + Robot.Vy.full * sin_alpha ) / 1000.0;
+	Vy = ( -Robot.Vx.full * sin_alpha + Robot.Vy.full * cos_alpha ) / 1000.0;
+	Wr = Robot.Wr.full / 1000.0;
+	// 7 set points for system
+	//kinematics rules that should be considered for specifying desired output
+	
+	// 	xd=(C'*C)\C'*Yd;%inv(C'*C)*C'*Yd; & C = I7x7		=>		xd = Yd
+	x[0][0] = Vx ;
+	x[1][0] = Vy ;
+	x[2][0] = Wr ;
+	x[3][0] = Robot.W0.full ;
+	x[4][0] = Robot.W1.full ;
+	x[5][0] = Robot.W2.full ;
+	x[6][0] = Robot.W3.full ;
 	
 	// data checking 1 : data is produced correctly (checked with model in MATLAB)
 }
@@ -157,7 +179,7 @@ void state_feed_back ( void )
 			du [i][j] = 0 ;
 			for (int k = 0 ; k < 7 ; k ++)
 			{
-				du [i][j] += k_sf [i][k] * dx [k][j];
+				//du [i][j] += k_sf [i][k] * dx [k][j];
 			}
 		}
 	}
@@ -193,7 +215,7 @@ void observer ( void )
 		{
 			for (int k = 0 ; k < 7 ; k ++)
 			{
-				x_OB [i][j] += A [i][k] * x_OB [k][j];
+				x_OB [i][j] += A [i][k] * x_OB [k][j]*0.00378;
 			}
 		}
 	}
@@ -205,7 +227,7 @@ void observer ( void )
 		{
 			for (int k = 0 ; k < 4 ; k ++)
 			{
-				x_OB [i][j] += B [i][k] * u [k][j];
+				x_OB [i][j] += B [i][k] * u [k][j]*0.00378;
 			}
 		}
 	}
@@ -225,7 +247,7 @@ void observer ( void )
 		{
 			for (int k = 0 ; k < 7 ; k ++)
 			{
-				x_OB [i][j] += G [i][k] * x_temp [k][j];
+				x_OB [i][j] += G [i][k] * x_temp [k][j]*0.00378;
 			}
 		}
 	}
