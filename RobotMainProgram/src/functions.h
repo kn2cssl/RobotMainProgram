@@ -99,6 +99,7 @@ struct Robot_Data
 	
 	//! Battery voltage
 	FHL bat_v;
+	HL  batx1000;
 	
 	//! Spin_back's speed setpoint
 	int8_t SB_sp	;
@@ -160,5 +161,5 @@ struct bust_buck_status
 
 //! Test variables
 extern int test ;
-
+extern HL tt;
 #endif /* FUNCTIONS_H_ */
