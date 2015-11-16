@@ -11,7 +11,8 @@
 uint8_t send_packet[40];
 uint8_t receive_packet[40];
 int packet_counter ;
-uint16_t timer ;
+uint16_t timer_h ;
+uint16_t timer_l ;
 HL temp_data[10];
 
 //! Wireless connection variables
@@ -27,7 +28,7 @@ int summer=0;
 bool free_wheel = false;
 uint8_t number_of_sent_packet , number_of_received_packet ;
 enum Data_Flow data = d;
-struct Robot_Data Robot={.bat_v.full=12.6, .orc_length=0b00010000};
+struct Robot_Data Robot={.bat_v.full=12.00, .orc_length=0b00010000};
 
 //! ADC variables
 float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
@@ -40,6 +41,7 @@ struct boost_buck_status bbs={.charge_flag=true};
 
 //! Test variables
 int test = 0;
+HL tt[5];
 inline void wireless_connection ( void )
 {
 	uint8_t status_L = NRF24L01_WriteReg(W_REGISTER | STATUSe, _TX_DS|_MAX_RT|_RX_DR);
@@ -72,7 +74,7 @@ inline void wireless_connection ( void )
 			Robot.KICK				= spi_rx_buf[15];
 			Robot.CHIP				= spi_rx_buf[16];
 			/*Robot.SPIN*/Robot.orc_length		= spi_rx_buf[17];//! test !!!!!!!!!!
-			data_transmission();
+			NRF24L01_Write_TX_Buf(spi_tx_buf, _Buffer_Size);
 			signal_strength++;
 		}
 		
@@ -88,49 +90,57 @@ inline void wireless_connection ( void )
 // run time : 2276 clk
 inline void data_transmission (void)
 {
-	//! put debug data to show arrays
-	HL show[4];
-	show[0].full = Robot.nsp;
-	show[1].full = Robot.nrp;
-	show[2].full = Robot.ss;
-	show[3].full = Robot.bat_v.full*100;
+	HL show[11];
+	show[0].full =u[0][0]*1000 ;
+	show[1].full =u[1][0]*1000 ;
+	show[2].full =u[2][0]*1000 ;
+	show[3].full =u[3][0]*1000 ;
 	
+	show[4].full =x[0][0]*1000 ;
+	show[5].full =x[1][0]*1000 ;
+	show[6].full =x[2][0]*1000 ;
+	
+	show[7].full =x_OB[0][0]*1000 ;
+	show[8].full =x_OB[1][0]*1000 ;
+	show[9].full =x_OB[2][0]*1000 ;
+	
+	show[10].full = d_time * 1e+5 ;
+
 	//! Debug data
-	spi_tx_buf[0]  = show[0].byte[high];
-	spi_tx_buf[1]  = show[0].byte[low];
-	spi_tx_buf[2]  = show[1].byte[high];
-	spi_tx_buf[3]  = show[1].byte[low];
-	spi_tx_buf[4]  = show[2].byte[high];
-	spi_tx_buf[5]  = show[2].byte[low]; 
-	spi_tx_buf[6]  = show[3].byte[high];
-	spi_tx_buf[7]  = show[3].byte[low]; 
+	spi_tx_buf[0]  = show[10].byte[high];//
+	spi_tx_buf[1]  = show[10].byte[low]; //
+	spi_tx_buf[2]  = show[0].byte[high];//
+	spi_tx_buf[3]  = show[0].byte[low];	//
+	spi_tx_buf[4]  = show[1].byte[high];//
+	spi_tx_buf[5]  = show[1].byte[low];	//
+	spi_tx_buf[6]  = show[2].byte[high];//
+	spi_tx_buf[7]  = show[2].byte[low]; //
 	//! Monitoring data
-	spi_tx_buf[8]  = Robot.W0.byte[high];
-	spi_tx_buf[9]  = Robot.W0.byte[low];
-	spi_tx_buf[10] = Robot.W1.byte[high];
-	spi_tx_buf[11] = Robot.W1.byte[low];
-	spi_tx_buf[12] = Robot.W2.byte[high];
-	spi_tx_buf[13] = Robot.W2.byte[low];
-	spi_tx_buf[14] = Robot.W3.byte[high];
-	spi_tx_buf[15] = Robot.W3.byte[low];
-	spi_tx_buf[16] = Robot.I0.byte[high];
-	spi_tx_buf[17] = Robot.I0.byte[low];
-	spi_tx_buf[18] = Robot.I1.byte[high];
-	spi_tx_buf[19] = Robot.I1.byte[low];
-	spi_tx_buf[20] = Robot.I2.byte[high];
-	spi_tx_buf[21] = Robot.I2.byte[low];
-	spi_tx_buf[22] = Robot.I3.byte[high];
-	spi_tx_buf[23] = Robot.I3.byte[low];
-	spi_tx_buf[24] = Robot.MCU_temperature.byte[high];
-	spi_tx_buf[25] = Robot.MCU_temperature.byte[low];
-	spi_tx_buf[26] = Robot.bat_v.byte[high];
-	spi_tx_buf[27] = Robot.bat_v.byte[low];
-	spi_tx_buf[28] = Robot.nsp ;
-	spi_tx_buf[29] = Robot.nrp ;
-	spi_tx_buf[30] = Robot.ss  ;
-	spi_tx_buf[31] = Robot.wrc ;
+	spi_tx_buf[8]  = show[3].byte[high];//Robot.Vx.byte[high];   //
+	spi_tx_buf[9]  = show[3].byte[low]; //Robot.Vx.byte[low];    //
+	spi_tx_buf[10] = show[4].byte[high];//Robot.Vy.byte[high];   //
+	spi_tx_buf[11] = show[4].byte[low];	//Robot.Vy.byte[low];    //
+	spi_tx_buf[12] = show[5].byte[high];//Robot.Wr.byte[high];   //
+	spi_tx_buf[13] = show[5].byte[low];	//Robot.Wr.byte[low];    //
+	spi_tx_buf[14] = show[6].byte[high];//
+	spi_tx_buf[15] = show[6].byte[low]; //
+	spi_tx_buf[16] = show[7].byte[high];//
+	spi_tx_buf[17] = show[7].byte[low]; //
+	spi_tx_buf[18] = show[8].byte[high];//
+	spi_tx_buf[19] = show[8].byte[low]; //
+	spi_tx_buf[20] = show[9].byte[high];
+	spi_tx_buf[21] = show[9].byte[low]; 
+	spi_tx_buf[22] = Robot.W0.byte[high];
+	spi_tx_buf[23] = Robot.W0.byte[low];
+	spi_tx_buf[24] = Robot.W1.byte[high];
+	spi_tx_buf[25] = Robot.W1.byte[low];
+	spi_tx_buf[26] = Robot.W2.byte[high];
+	spi_tx_buf[27] = Robot.W2.byte[low];
+	spi_tx_buf[28] = Robot.W3.byte[high];
+	spi_tx_buf[29] = Robot.W3.byte[low];
+	spi_tx_buf[30] = Robot.batx1000.byte[high];        //.nsp ;
+	spi_tx_buf[31] = Robot.batx1000.byte[low];         //.nrp ;
 	
-	NRF24L01_Write_TX_Buf(spi_tx_buf, _Buffer_Size);
 }
 
 // run time : 457 clk
@@ -255,7 +265,7 @@ inline void data_unpacking (void)
 
 inline void free_wheel_function ( void )
 {
-	if (bbs.charge_flag||free_wheel || (Robot.Vx_sp.full == 258 && Robot.Vy_sp.full == 772))
+	if (free_wheel || (Robot.Vx_sp.full == 258 && Robot.Vy_sp.full == 772))
 	{
 		Robot.W0_sp.byte[high]		= 1;
 		Robot.W0_sp.byte[low ]		= 2;
@@ -271,6 +281,7 @@ inline void free_wheel_function ( void )
 //starting counter
 inline void Timer_on(void)
 {
+	TCE0_CNT = 0 ;
 	TCE1_CNT = 0 ;
 }
 
@@ -278,8 +289,8 @@ inline void Timer_on(void)
 //running time : about 26400 clk
 inline void Timer_show (void)
 {
-	timer = TCE1_CNT - 17; // 17 clk is for excessive clk counted
-	timer = 2.048 * timer;
+	timer_l = TCE0_CNT ; 
+	timer_h = TCE1_CNT ; 
 }
 
 inline void read_all_adc(void)
@@ -310,6 +321,7 @@ inline void battery_voltage_update(void)
 {
 	//! Low pass filter for eliminating noise and impact of current  drawing of motors and boost circuit
 	Robot.bat_v.full = (adc_bat - Robot.bat_v.full)*0.0001 + Robot.bat_v.full ;
+	Robot.batx1000.full =Robot.bat_v.full*1000;
 	if (Robot.bat_v.full < 10)
 	{
 		ioport_set_value(BUZZER, high);
@@ -412,6 +424,7 @@ void boost_buck_manager(void)
 		CHARGE_STOP;
 		KICK_STOP;
 		CHIP_STOP;
+		bbs.charge_flag = false;
 		if (BOOST_BUCK_TIMER > 1000)
 		{
 			ioport_toggle_pin(BUZZER);

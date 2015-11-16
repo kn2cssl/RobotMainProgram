@@ -127,7 +127,8 @@ struct Robot_Data
 extern uint8_t send_packet[40];
 extern uint8_t receive_packet[40];
 extern int packet_counter ;
-extern uint16_t timer ;
+extern uint16_t timer_h ;
+extern uint16_t timer_l ;
 extern HL temp_data[10];
 
 //! Wireless connection variables
@@ -161,5 +162,5 @@ struct boost_buck_status
 
 //! Test variables
 extern int test ;
-extern HL tt;
+extern HL tt[5];
 #endif /* FUNCTIONS_H_ */

@@ -65,9 +65,13 @@ int main (void)
 		// run time : about 19115 clk
 		if (data == new_controller_loop)
 		{
+			Timer_show();
+			Timer_on();
+			
+			d_time = timer_h/1000.0 + timer_l/500000.0 ;
 			
 			observer();
-			tt.full = 	x_OB[0][0]*1000;
+			
 			state_generator();
 			
 			setpoint_generator() ;
@@ -119,6 +123,8 @@ int main (void)
 			battery_voltage_update();
       
 			boost_buck_manager();
+			
+			data_transmission();	
 
 			data = new_controller_loop;
 		}
