@@ -19,11 +19,6 @@
 #define a3 225/180*M_PI      // 3.926990816987241   rad
 #define a4 303.69/180*M_PI   // 5.300390405381579   rad
 
-#define g1 20.01/180*M_PI    // 0.3492403833240653  rad
-#define g2 0/180*M_PI        // 0				   rad
-#define g3 0/180*M_PI        // 0				   rad
-#define g4 20.01/180*M_PI    // 0.3492403833240653  rad
-
 //
 
 #define sina1 0.8321   
@@ -34,12 +29,7 @@
 #define cosa1 0.5547  
 #define cosa2 -0.7071 
 #define cosa3 -0.7071 
-#define cosa4 0.5547  
-
-#define cosg1 0.9396 
-#define cosg2 1       
-#define cosg3 1       
-#define cosg4 0.9396  
+#define cosa4 0.5547   
 
 
 //robot constants
@@ -95,5 +85,6 @@ extern double k_sf[4][7] ;
 
 extern double max_ocr ;
 
+extern float d_time;
 
 #endif /* CONTROLLER_H_ */
