@@ -149,7 +149,7 @@ extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
 extern uint64_t seconds;
 
 //! boost & buck variables
-struct bust_buck_status
+struct boost_buck_status
 {
   bool failure;
   bool charge_flag;

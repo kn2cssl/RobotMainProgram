@@ -36,7 +36,7 @@ float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
 uint64_t seconds;
 
 //! boost & buck variables
-struct bust_buck_status bbs;
+struct boost_buck_status bbs={.charge_flag=true};
 
 //! Test variables
 int test = 0;
