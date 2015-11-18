@@ -167,8 +167,8 @@ void tc_init(void)
   //! Functions timing
   tc_enable(&TCE0);
   tc_set_wgm(&TCE0, TC_WG_NORMAL);
-  tc_write_period(&TCE0, 0xFFFF);
-  tc_write_clock_source(&TCE0, TC_CLKSEL_DIV1_gc);
+  tc_write_period(&TCE0, 500);
+  tc_write_clock_source(&TCE0, TC_CLKSEL_DIV64_gc);
   
   tc_enable(&TCE1);
   tc_set_wgm(&TCE1, TC_WG_NORMAL);
