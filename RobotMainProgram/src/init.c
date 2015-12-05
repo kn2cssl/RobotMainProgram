@@ -85,7 +85,7 @@ void adc_init(void)
 	struct adc_channel_config adcch_conf;
 	adc_read_configuration(&ADCA, &adc_conf);
 	adcch_read_configuration(&ADCA, ADC_CH0, &adcch_conf);
-	adc_set_conversion_parameters(&adc_conf, ADC_SIGN_ON, ADC_RES_12, ADC_REF_AREFA);
+	adc_set_conversion_parameters(&adc_conf, ADC_SIGN_OFF, ADC_RES_12, ADC_REF_AREFB);
 	adc_set_conversion_trigger(&adc_conf, ADC_TRIG_EVENT_SWEEP, 4, 0);
 	adc_enable_internal_input(&adc_conf, ADC_INT_TEMPSENSE);
 	adc_set_clock_rate(&adc_conf, 200000UL);
@@ -109,8 +109,8 @@ void adc_init(void)
 	//! ADCB
 	adc_read_configuration(&ADCB, &adc_conf);
 	adcch_read_configuration(&ADCB, ADC_CH0, &adcch_conf);
-	adc_set_conversion_parameters(&adc_conf, ADC_SIGN_ON, ADC_RES_12, ADC_REF_AREFA);
-	adc_set_conversion_trigger(&adc_conf, ADC_TRIG_EVENT_SWEEP, 2, 0);
+	adc_set_conversion_parameters(&adc_conf, ADC_SIGN_OFF, ADC_RES_12, ADC_REF_AREFB);
+	adc_set_conversion_trigger(&adc_conf, ADC_TRIG_EVENT_SWEEP, 3, 0);
 	adc_enable_internal_input(&adc_conf, ADC_INT_TEMPSENSE);
 	adc_set_clock_rate(&adc_conf, 200000UL);
 	adc_write_configuration(&ADCB, &adc_conf);
@@ -121,9 +121,57 @@ void adc_init(void)
 	//! M1
 	adcch_set_input(&adcch_conf, ADCCH_POS_PIN1, ADCCH_NEG_NONE, 1);
 	adcch_write_configuration(&ADCB, ADC_CH1, &adcch_conf);
+	//! BANDGAP
+	adcch_set_input(&adcch_conf, ADCCH_POS_BANDGAP, ADCCH_NEG_NONE, 1);
+	adcch_write_configuration(&ADCB, ADC_CH2, &adcch_conf);
 	
 	adc_enable(&ADCB);
 	
+	adc_calibration();	
+}
+
+void adc_calibration (void)
+{
+	//! Help : ADC_result = adc_gain * voltage + adc_offset
+	float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;
+	
+	ioport_set_pin_dir(MOTOR0_CURRENT_ADC,IOPORT_DIR_OUTPUT);
+	ioport_set_pin_dir(MOTOR1_CURRENT_ADC,IOPORT_DIR_OUTPUT);
+	ioport_set_pin_dir(MOTOR2_CURRENT_ADC,IOPORT_DIR_OUTPUT);
+	ioport_set_pin_dir(MOTOR3_CURRENT_ADC,IOPORT_DIR_OUTPUT);
+	ioport_set_pin_level(MOTOR0_CURRENT_ADC,low);
+	ioport_set_pin_level(MOTOR1_CURRENT_ADC,low);
+	ioport_set_pin_level(MOTOR2_CURRENT_ADC,low);
+	ioport_set_pin_level(MOTOR3_CURRENT_ADC,low);
+	
+	for (int i=10; i ; i-- )
+	{
+		EVSYS.DATA = 0x01;
+		EVSYS.STROBE = 0x01;
+		delay_ms(1); //! Time needed for good result (tested)
+		adc_m2_offset           += adc_get_result(&ADCA, ADC_CH2);
+		adc_m3_offset           += adc_get_result(&ADCA, ADC_CH3);
+		adc_m0_offset           += adc_get_result(&ADCB, ADC_CH0);
+		adc_m1_offset           += adc_get_result(&ADCB, ADC_CH1);
+		adc_bandgap             += adc_get_result(&ADCB, ADC_CH2);
+		             
+		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
+		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );	
+	}
+	
+	adc_m2_offset       = adc_m2_offset	 / 10 ;
+	adc_m3_offset       = adc_m3_offset	 / 10 ;
+	adc_m0_offset       = adc_m0_offset	 / 10 ;
+	adc_m1_offset       = adc_m1_offset  / 10 ;
+	adc_bandgap         = adc_bandgap    / 10 ;
+	
+	adc_offset = (adc_m0_offset + adc_m1_offset + adc_m2_offset + adc_m3_offset) / 4 ;
+	adc_gain   = (adc_bandgap - adc_offset) / 1.1 ;
+	
+	ioport_set_pin_dir(MOTOR0_CURRENT_ADC,IOPORT_DIR_INPUT);
+	ioport_set_pin_dir(MOTOR1_CURRENT_ADC,IOPORT_DIR_INPUT);
+	ioport_set_pin_dir(MOTOR2_CURRENT_ADC,IOPORT_DIR_INPUT);
+	ioport_set_pin_dir(MOTOR3_CURRENT_ADC,IOPORT_DIR_INPUT);
 }
 
 

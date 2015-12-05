@@ -31,8 +31,8 @@ enum Data_Flow data = d;
 struct Robot_Data Robot={.bat_v.full=12.00, .orc_length=0b00010000};
 
 //! ADC variables
-float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature;
-
+float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature, adc_bandgap;
+float adc_gain, adc_offset ;
 //! Time
 uint64_t seconds;
 
@@ -298,29 +298,22 @@ inline void read_all_adc(void)
 	//! To manually trigger adc through event channel (CH0)
 	EVSYS.DATA = 0x01;
 	EVSYS.STROBE = 0x01;
-	
-/** If statement is removed for decreeing processing time. 
- *  First data will be zero ,but later data will be OK 
- *  because of enough delay for later READ_ADCs
- */
-// 	if (adc_get_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3) == (ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3) &&
-// 	adc_get_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 ) == (ADC_CH0 | ADC_CH1 ))
-// 	{
-		adc_temperature  = adc_get_result(&ADCA, ADC_CH0);
-		adc_bat          = adc_get_result(&ADCA, ADC_CH1) * 0.00924 ;// 0.924 = 3.3/2048.0*100*5.734;
-		adc_m2           = adc_get_result(&ADCA, ADC_CH2);
-		adc_m3           = adc_get_result(&ADCA, ADC_CH3);
-		adc_m0           = adc_get_result(&ADCB, ADC_CH0);
-		adc_m1           = adc_get_result(&ADCB, ADC_CH1);
-		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
-		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
-//	}
+
+	adc_temperature  =  adc_get_result(&ADCA, ADC_CH0) - adc_offset ;
+	adc_bat          = (adc_get_result(&ADCA, ADC_CH1) - adc_offset) / adc_gain ;
+	adc_m2           = (adc_get_result(&ADCA, ADC_CH2) - adc_offset) / adc_gain ;
+	adc_m3           = (adc_get_result(&ADCA, ADC_CH3) - adc_offset) / adc_gain ;
+	adc_m0           = (adc_get_result(&ADCB, ADC_CH0) - adc_offset) / adc_gain ;
+	adc_m1           = (adc_get_result(&ADCB, ADC_CH1) - adc_offset) / adc_gain ;
+	adc_bandgap      = (adc_get_result(&ADCB, ADC_CH2) - adc_offset) / adc_gain ;
+	adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
+	adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
 }
 
 inline void battery_voltage_update(void)
 {
 	//! Low pass filter for eliminating noise and impact of current  drawing of motors and boost circuit
-	Robot.bat_v.full = (adc_bat - Robot.bat_v.full)*0.0001 + Robot.bat_v.full ;
+	Robot.bat_v.full = (adc_bat*1.22/.22  - Robot.bat_v.full)*0.01 + Robot.bat_v.full ;// voltage dividing : 1M & 220K
 	Robot.batx1000.full =Robot.bat_v.full*1000;
 	if (Robot.bat_v.full < 10)
 	{

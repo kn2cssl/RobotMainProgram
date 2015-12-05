@@ -32,6 +32,7 @@ void nrf_init (void);
 void robot_id_set(void);
 void evsys_init(void);
 void adc_init(void);
+void adc_calibration (void);
 void tc_init(void);
 extern char Address[_Address_Width];
 

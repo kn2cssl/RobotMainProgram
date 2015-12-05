@@ -144,7 +144,8 @@ extern enum Data_Flow data;
 extern struct Robot_Data Robot;
 
 //! ADC variables
-extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
+extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature, adc_bandgap;
+extern float adc_gain, adc_offset;
 
 //! Time
 extern uint64_t seconds;
