@@ -33,6 +33,7 @@ void robot_id_set(void);
 void evsys_init(void);
 void adc_init(void);
 void adc_calibration (void);
+void current_sensor_offset (void);
 void tc_init(void);
 extern char Address[_Address_Width];
 

@@ -133,7 +133,6 @@ void adc_init(void)
 void adc_calibration (void)
 {
 	//! Help : ADC_result = adc_gain * voltage + adc_offset
-	float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;
 	
 	ioport_set_pin_dir(MOTOR0_CURRENT_ADC,IOPORT_DIR_OUTPUT);
 	ioport_set_pin_dir(MOTOR1_CURRENT_ADC,IOPORT_DIR_OUTPUT);
@@ -172,6 +171,28 @@ void adc_calibration (void)
 	ioport_set_pin_dir(MOTOR1_CURRENT_ADC,IOPORT_DIR_INPUT);
 	ioport_set_pin_dir(MOTOR2_CURRENT_ADC,IOPORT_DIR_INPUT);
 	ioport_set_pin_dir(MOTOR3_CURRENT_ADC,IOPORT_DIR_INPUT);
+}
+
+void current_sensor_offset (void)
+{
+	for (int i=50; i ; i-- )
+	{
+		EVSYS.DATA = 0x01;
+		EVSYS.STROBE = 0x01;
+		delay_ms(1); //! Time needed for good result (tested)
+		adc_m2_offset           += adc_get_result(&ADCA, ADC_CH2);
+		adc_m3_offset           += adc_get_result(&ADCA, ADC_CH3);
+		adc_m0_offset           += adc_get_result(&ADCB, ADC_CH0);
+		adc_m1_offset           += adc_get_result(&ADCB, ADC_CH1);
+		
+		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
+		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
+	}
+	
+	adc_m0_offset       = (adc_m0_offset	 / 50 - adc_offset) / adc_gain;
+	adc_m1_offset       = (adc_m1_offset	 / 50 - adc_offset) / adc_gain;
+	adc_m2_offset       = (adc_m2_offset	 / 50 - adc_offset) / adc_gain;
+	adc_m3_offset       = (adc_m3_offset     / 50 - adc_offset) / adc_gain;
 }
 
 
