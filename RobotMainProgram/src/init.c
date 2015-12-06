@@ -175,24 +175,31 @@ void adc_calibration (void)
 
 void current_sensor_offset (void)
 {
-	for (int i=50; i ; i-- )
+	if (!current_offset_check)
 	{
-		EVSYS.DATA = 0x01;
-		EVSYS.STROBE = 0x01;
-		delay_ms(1); //! Time needed for good result (tested)
-		adc_m2_offset           += adc_get_result(&ADCA, ADC_CH2);
-		adc_m3_offset           += adc_get_result(&ADCA, ADC_CH3);
-		adc_m0_offset           += adc_get_result(&ADCB, ADC_CH0);
-		adc_m1_offset           += adc_get_result(&ADCB, ADC_CH1);
+		if ( (abs(Robot.W0.full)< 5) && (abs(Robot.W1.full)< 5) && (abs(Robot.W2.full)< 5) && (abs(Robot.W3.full)< 5) )
+		{
+			current_offset_check = true;
+			for (int i=50; i ; i-- )
+			{
+				EVSYS.DATA = 0x01;
+				EVSYS.STROBE = 0x01;
+				delay_ms(1); //! Time needed for good result (tested)
+				adc_m2_offset           += adc_get_result(&ADCA, ADC_CH2);
+				adc_m3_offset           += adc_get_result(&ADCA, ADC_CH3);
+				adc_m0_offset           += adc_get_result(&ADCB, ADC_CH0);
+				adc_m1_offset           += adc_get_result(&ADCB, ADC_CH1);
 		
-		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
-		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
-	}
+				adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
+				adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
+			}
 	
-	adc_m0_offset       = (adc_m0_offset	 / 50 - adc_offset) / adc_gain;
-	adc_m1_offset       = (adc_m1_offset	 / 50 - adc_offset) / adc_gain;
-	adc_m2_offset       = (adc_m2_offset	 / 50 - adc_offset) / adc_gain;
-	adc_m3_offset       = (adc_m3_offset     / 50 - adc_offset) / adc_gain;
+			adc_m0_offset       = (adc_m0_offset	 / 50 - adc_offset) / adc_gain;
+			adc_m1_offset       = (adc_m1_offset	 / 50 - adc_offset) / adc_gain;
+			adc_m2_offset       = (adc_m2_offset	 / 50 - adc_offset) / adc_gain;
+			adc_m3_offset       = (adc_m3_offset     / 50 - adc_offset) / adc_gain;
+			}
+	}
 }
 
 

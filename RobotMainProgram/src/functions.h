@@ -165,7 +165,7 @@ extern struct free_wheel_cause free_wheel;
 extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature, adc_bandgap;
 extern float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;
 extern float adc_gain, adc_offset;
-
+extern bool current_offset_check ;
 //! Time
 extern uint64_t seconds;
 

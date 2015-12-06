@@ -45,8 +45,8 @@ int main (void)
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
-	delay_ms(1);     //! Delay needed for best result in calculating current sensors' offsets
-	current_sensor_offset();
+// 	delay_ms(1);     //! Delay needed for best result in calculating current sensors' offsets
+// 	current_sensor_offset();
 	tc_init();    
 	rtc_init();
  
@@ -126,10 +126,13 @@ int main (void)
 			
 			read_all_adc();
 			battery_voltage_update();
-      
+
 			boost_buck_manager();
 			motors_current_check();
-			data_transmission();	
+			data_transmission();
+
+			current_sensor_offset();
+				
 
 			data = new_controller_loop;
 			// PBUG enabling interrupts
