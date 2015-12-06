@@ -26,6 +26,7 @@ void read_all_adc(void);
 void battery_voltage_update(void);
 void every_250ms(void);
 void boost_buck_manager(void);
+void motors_current_check(void);
 
 #define high 1
 #define	low	 0
@@ -88,11 +89,22 @@ struct Robot_Data
 	HL W2	;
 	HL W3	;
 	
+	HL W0_l	;
+	HL W1_l	;
+	HL W2_l	;
+	HL W3_l	;
+	
+	//motors fault
+	uint8_t W0_warning	;
+	uint8_t W1_warning	;
+	uint8_t W2_warning	;
+	uint8_t W3_warning	;
+	
 	//! Motors' current
-	HL I0;
-	HL I1;
-	HL I2;
-	HL I3;
+	FHL I0;
+	FHL I1;
+	FHL I2;
+	FHL I3;
 	
 	//! MCU's temperature
 	HL MCU_temperature;
