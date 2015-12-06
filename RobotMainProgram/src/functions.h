@@ -138,11 +138,17 @@ extern char Address[_Address_Width];
 
 //! System variables
 extern int summer;
-extern bool free_wheel;
+struct free_wheel_cause
+{
+	bool wireless_timeout ;
+	bool motor_fault ;
+	bool low_battery;
+};
+
 extern uint8_t number_of_sent_packet  , number_of_received_packet ;
 extern enum Data_Flow data;
 extern struct Robot_Data Robot;
-
+extern struct free_wheel_cause free_wheel;
 //! ADC variables
 extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature, adc_bandgap;
 extern float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;

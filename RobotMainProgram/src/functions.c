@@ -25,13 +25,14 @@ uint8_t signal_strength;
 
 //! System variables
 int summer=0;
-bool free_wheel = false;
+struct free_wheel_cause free_wheel = {.low_battery = false, .motor_fault = false, .wireless_timeout = false};
 uint8_t number_of_sent_packet , number_of_received_packet ;
 enum Data_Flow data = d;
 struct Robot_Data Robot={.bat_v.full=12.00, .orc_length=0b00010000};
 
 //! ADC variables
-float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat = 12.6 , adc_temperature, adc_bandgap;
+float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature, adc_bandgap;
+float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;
 float adc_gain, adc_offset ;
 //! Time
 uint64_t seconds;
@@ -265,7 +266,7 @@ inline void data_unpacking (void)
 
 inline void free_wheel_function ( void )
 {
-	if (free_wheel || (Robot.Vx_sp.full == 258 && Robot.Vy_sp.full == 772))
+	if (free_wheel.low_battery || free_wheel.motor_fault || free_wheel.wireless_timeout /*|| (Robot.Vx_sp.full == 258 && Robot.Vy_sp.full == 772)*/)
 	{
 		Robot.W0_sp.byte[high]		= 1;
 		Robot.W0_sp.byte[low ]		= 2;

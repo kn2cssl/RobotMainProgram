@@ -56,7 +56,7 @@ int main (void)
 		if (WIRLESS_TIMEOUT_TIMER >= 10)
 		{
 			nrf_init () ;
-			free_wheel = 1 ;
+			free_wheel.wireless_timeout = true ;
 			WIRLESS_TIMEOUT_TIMER = 0;
 			data = new_controller_loop ;//for sending free wheel order to fpga
 			Robot.wrc ++;
