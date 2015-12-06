@@ -44,9 +44,11 @@ int main (void)
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
+	delay_ms(1);     //! Delay needed for best result in calculating current sensors' offsets
+	current_sensor_offset();
 	tc_init();    
-	rtc_init();   
-
+	rtc_init();
+ 
 	sei();
 	
 	// complete run time : 23102 clk
