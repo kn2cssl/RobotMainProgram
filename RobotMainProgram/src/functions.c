@@ -28,12 +28,13 @@ int summer=0;
 struct free_wheel_cause free_wheel = {.low_battery = false, .motor_fault = false, .wireless_timeout = false};
 uint8_t number_of_sent_packet , number_of_received_packet ;
 enum Data_Flow data = d;
-struct Robot_Data Robot={.bat_v.full=12.00, .orc_length=0b00010000};
+struct Robot_Data Robot={.bat_v.full=12.60, .orc_length=0b00010000};
 
 //! ADC variables
 float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature, adc_bandgap;
 float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;
 float adc_gain, adc_offset ;
+bool current_offset_check = false;
 //! Time
 uint64_t seconds;
 
@@ -449,27 +450,27 @@ inline void motors_current_check(void)
 	Robot.I1.full = ((adc_m1 - adc_m1_offset)* 9.942084942 - Robot.I1.full)*0.1 + Robot.I1.full;
 	Robot.I2.full = ((adc_m2 - adc_m2_offset)* 9.942084942 - Robot.I2.full)*0.1 + Robot.I2.full;
 	Robot.I3.full = ((adc_m3 - adc_m3_offset)* 9.942084942 - Robot.I3.full)*0.1 + Robot.I3.full;
-	//i_m=(V-V_emf)/R=(V-?_m/k_n )/R
-	i_model_M0 = (float) (u[1][0] - Robot.W0.full*N/ kn) / res ;
-	i_model_M1 = (float) (u[1][0] - x_OB[4][0]) / kn / res;
-	i_model_M2 = (float) (u[2][0] - x_OB[5][0]) / kn / res;
-	i_model_M3 = (float) (u[3][0] - x_OB[6][0]) / kn / res;
-	Robot.W0_l.full = Robot.W0.full;
+	// TODO amazing and strange result in comparison with current-sensor's result
+//  i_m=(V-V_emf)/R=(V-?_m/k_n )/R  : another way of calculating current
+// 	i_model_M0 = (float) (u[0][0] - Robot.W0.full*N/ kn) / res ;
+// 	i_model_M1 = (float) (u[1][0] - Robot.W1.full*N/ kn) / res ;
+// 	i_model_M2 = (float) (u[2][0] - Robot.W2.full*N/ kn) / res ;
+// 	i_model_M3 = (float) (u[3][0] - Robot.W3.full*N/ kn) / res ;
 	
-	if ( fabs(Robot.I0.full-i_model_M0)>0.5) Robot.W0_warning ++;
+	if ( fabs(Robot.I0.full)>0.3) Robot.W0_warning ++;
 	else if(Robot.W0_warning) Robot.W0_warning --;
 	
-	if ( fabs(Robot.I1.full-i_model_M1)>0.5) Robot.W1_warning ++;
+	if ( fabs(Robot.I1.full)>0.3) Robot.W1_warning ++;
 	else if(Robot.W1_warning) Robot.W1_warning --;
 	
-	if ( fabs(Robot.I2.full-i_model_M2)>0.5) Robot.W2_warning ++;
+	if ( fabs(Robot.I2.full)>0.3) Robot.W2_warning ++;
 	else if(Robot.W2_warning) Robot.W2_warning --;
 	
-	if ( fabs(Robot.I3.full-i_model_M3)>0.5) Robot.W3_warning ++;
+	if ( fabs(Robot.I3.full)>0.3) Robot.W3_warning ++;
 	else if(Robot.W3_warning) Robot.W3_warning --;
 	
-	if(Robot.W0_warning > 1 || Robot.W1_warning > 100 || Robot.W2_warning > 100 || Robot.W3_warning > 100)
+	if(Robot.W0_warning > 1000 || Robot.W1_warning > 1000 || Robot.W2_warning > 1000 || Robot.W3_warning > 1000)
 	{
-		//motor_fault = true;
+		free_wheel.motor_fault = true;
 	}
 }

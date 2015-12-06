@@ -95,10 +95,10 @@ struct Robot_Data
 	HL W3_l	;
 	
 	//motors fault
-	uint8_t W0_warning	;
-	uint8_t W1_warning	;
-	uint8_t W2_warning	;
-	uint8_t W3_warning	;
+	uint16_t W0_warning	;
+	uint16_t W1_warning	;
+	uint16_t W2_warning	;
+	uint16_t W3_warning	;
 	
 	//! Motors' current
 	FHL I0;
