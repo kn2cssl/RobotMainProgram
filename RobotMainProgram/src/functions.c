@@ -42,6 +42,10 @@ struct boost_buck_status bbs={.charge_flag=true};
 
 //! Test variables
 int test = 0;
+float i_model_M0 ;
+float i_model_M1 ;
+float i_model_M2 ;
+float i_model_M3 ;
 HL tt[5];
 inline void wireless_connection ( void )
 {
@@ -430,4 +434,40 @@ void boost_buck_manager(void)
 	}
 
   
+}
+
+// TODO motors_current_check(void) is not completed and is not tested
+inline void motors_current_check(void)
+{
+	//currents
+	// voltage dividing : 560k & 470k => (560 + 470) / 560 = 103 / 56
+	// Current sensor : 185 mV/A output sensitivity
+	// 103 / 56 / 0.185 = 9.942084942
+	Robot.I0.full = ((adc_m0 - adc_m0_offset)* 9.942084942 - Robot.I0.full)*0.1 + Robot.I0.full;
+	Robot.I1.full = ((adc_m1 - adc_m1_offset)* 9.942084942 - Robot.I1.full)*0.1 + Robot.I1.full;
+	Robot.I2.full = ((adc_m2 - adc_m2_offset)* 9.942084942 - Robot.I2.full)*0.1 + Robot.I2.full;
+	Robot.I3.full = ((adc_m3 - adc_m3_offset)* 9.942084942 - Robot.I3.full)*0.1 + Robot.I3.full;
+	//i_m=(V-V_emf)/R=(V-?_m/k_n )/R
+	i_model_M0 = (float) (u[1][0] - Robot.W0.full*N/ kn) / res ;
+	i_model_M1 = (float) (u[1][0] - x_OB[4][0]) / kn / res;
+	i_model_M2 = (float) (u[2][0] - x_OB[5][0]) / kn / res;
+	i_model_M3 = (float) (u[3][0] - x_OB[6][0]) / kn / res;
+	Robot.W0_l.full = Robot.W0.full;
+	
+	if ( fabs(Robot.I0.full-i_model_M0)>0.5) Robot.W0_warning ++;
+	else if(Robot.W0_warning) Robot.W0_warning --;
+	
+	if ( fabs(Robot.I1.full-i_model_M1)>0.5) Robot.W1_warning ++;
+	else if(Robot.W1_warning) Robot.W1_warning --;
+	
+	if ( fabs(Robot.I2.full-i_model_M2)>0.5) Robot.W2_warning ++;
+	else if(Robot.W2_warning) Robot.W2_warning --;
+	
+	if ( fabs(Robot.I3.full-i_model_M3)>0.5) Robot.W3_warning ++;
+	else if(Robot.W3_warning) Robot.W3_warning --;
+	
+	if(Robot.W0_warning > 1 || Robot.W1_warning > 100 || Robot.W2_warning > 100 || Robot.W3_warning > 100)
+	{
+		//motor_fault = true;
+	}
 }

@@ -125,7 +125,7 @@ int main (void)
 			battery_voltage_update();
       
 			boost_buck_manager();
-			
+			motors_current_check();
 			data_transmission();	
 
 			data = new_controller_loop;

@@ -33,12 +33,12 @@
 
 
 //robot constants
-#define N	76/20            //         %
+#define N	3.8              //         %76/20
 #define res 1.2              //       %ohm
 #define km	25.5/1000        //        %Nm/A
-#define kn	374              //        %rpm/V
+#define kn	374.0            //        %rpm/V
 #define kf	0.0001           //        %unknown
-#define ks	0.1              //       %unknown
+#define ks	0.01             //       %unknown
 #define r	28.5/1000        //         %m
 #define J	0.0192           //         %kg*m2%           >>modeling needed
 #define Jm	92.5/1000/10000  //        %kg*m2								//          0.00000925
