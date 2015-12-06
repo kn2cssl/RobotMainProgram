@@ -67,6 +67,8 @@ int main (void)
 		// run time : about 19115 clk
 		if (data == new_controller_loop)
 		{
+			// PBUG disabling interrupts
+			cli();
 			Timer_show();
 			Timer_on();
 			
@@ -129,6 +131,8 @@ int main (void)
 			data_transmission();	
 
 			data = new_controller_loop;
+			// PBUG enabling interrupts
+			sei();
 		}
 	}
 }
