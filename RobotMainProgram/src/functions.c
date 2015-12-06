@@ -314,15 +314,17 @@ inline void read_all_adc(void)
 inline void battery_voltage_update(void)
 {
 	//! Low pass filter for eliminating noise and impact of current  drawing of motors and boost circuit
-	Robot.bat_v.full = (adc_bat*1.22/.22  - Robot.bat_v.full)*0.01 + Robot.bat_v.full ;// voltage dividing : 1M & 220K
+	Robot.bat_v.full = (adc_bat*1.22/.22  - Robot.bat_v.full)*0.001 + Robot.bat_v.full ;// voltage dividing : 1M & 220K
 	Robot.batx1000.full =Robot.bat_v.full*1000;
-	if (Robot.bat_v.full < 10)
+	if (Robot.bat_v.full < 10.5)
 	{
-		ioport_set_value(BUZZER, high);
+ 		 ioport_set_value(BUZZER, high);
+		 if (Robot.bat_v.full < 10) free_wheel.low_battery = true ;
 	}
 	else
 	{
 		ioport_set_value(BUZZER, low);
+		free_wheel.low_battery = false ;
 	}
 }
 
