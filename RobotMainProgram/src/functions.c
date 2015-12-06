@@ -332,6 +332,7 @@ inline void battery_voltage_update(void)
 	}
 }
 
+// PBUG function every_250ms is an interrupting one, maybe i disable interrupts in main loop at some points, Attention!!
 inline void every_250ms(void)
 {
 	seconds++;  
@@ -346,7 +347,8 @@ inline void every_250ms(void)
 }
 
 
-void boost_buck_manager(void)
+// TODO all periods and duty cycles should be chosen carefully (in boost_buck_manager)
+inline void boost_buck_manager(void)
 {
 	if (!bbs.failure)
 	{

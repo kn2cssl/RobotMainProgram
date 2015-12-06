@@ -34,6 +34,7 @@
 #include "controller.h"
 #include "functions.h"
 
+//TODO All functions should be specified in starting and ending time
 int main (void)
 {
 	sysclk_init();   //! Initializing system clock
