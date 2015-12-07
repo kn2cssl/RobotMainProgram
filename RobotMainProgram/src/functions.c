@@ -456,20 +456,20 @@ inline void motors_current_check(void)
 // 	i_model_M1 = (float) (u[1][0] - Robot.W1.full*N/ kn) / res ;
 // 	i_model_M2 = (float) (u[2][0] - Robot.W2.full*N/ kn) / res ;
 // 	i_model_M3 = (float) (u[3][0] - Robot.W3.full*N/ kn) / res ;
-	
-	if ( fabs(Robot.I0.full)>0.3) Robot.W0_warning ++;
+
+	if ( fabs(Robot.I0.full)>0.3) Robot.W0_warning += fabs(Robot.I0.full) * 5;
 	else if(Robot.W0_warning) Robot.W0_warning --;
 	
-	if ( fabs(Robot.I1.full)>0.3) Robot.W1_warning ++;
+	if ( fabs(Robot.I1.full)>0.3) Robot.W1_warning += fabs(Robot.I1.full) * 5;
 	else if(Robot.W1_warning) Robot.W1_warning --;
 	
-	if ( fabs(Robot.I2.full)>0.3) Robot.W2_warning ++;
+	if ( fabs(Robot.I2.full)>0.3) Robot.W2_warning += fabs(Robot.I2.full) * 5;
 	else if(Robot.W2_warning) Robot.W2_warning --;
 	
-	if ( fabs(Robot.I3.full)>0.3) Robot.W3_warning ++;
+	if ( fabs(Robot.I3.full)>0.3) Robot.W3_warning += fabs(Robot.I3.full) * 5;
 	else if(Robot.W3_warning) Robot.W3_warning --;
 	
-	if(Robot.W0_warning > 1000 || Robot.W1_warning > 1000 || Robot.W2_warning > 1000 || Robot.W3_warning > 1000)
+	if(Robot.W0_warning > 60000 || Robot.W1_warning > 60000 || Robot.W2_warning > 60000 || Robot.W3_warning > 60000)
 	{
 		free_wheel.motor_fault = true;
 	}
