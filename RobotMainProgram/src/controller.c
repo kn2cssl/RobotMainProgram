@@ -284,8 +284,3 @@ inline void ocr_change(void)
 	Robot.orc_length=127;
 	max_ocr = (Robot.orc_length << 8) - 1 ;
 }
-
-
-
-
-

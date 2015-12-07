@@ -27,7 +27,7 @@ uint8_t signal_strength;
 int summer=0;
 struct free_wheel_cause free_wheel = {.low_battery = false, .motor_fault = false, .wireless_timeout = false};
 uint8_t number_of_sent_packet , number_of_received_packet ;
-enum Data_Flow data = d;
+enum Data_Flow data = new_controller_loop;
 struct Robot_Data Robot={.bat_v.full=12.60, .orc_length=0b00010000};
 
 //! ADC variables
@@ -58,7 +58,7 @@ inline void wireless_connection ( void )
 		wdt_reset();
 		//! read payload through SPI,
 		NRF24L01_Read_RX_Buf(spi_rx_buf, _Buffer_Size);
-		free_wheel=0 ;
+		free_wheel.wireless_timeout = false ;
 		if(spi_rx_buf[0] == RobotID )
 		{
 			ioport_set_value(LED_RED, high);
@@ -271,7 +271,7 @@ inline void data_unpacking (void)
 
 inline void free_wheel_function ( void )
 {
-	if (free_wheel.low_battery || free_wheel.motor_fault || free_wheel.wireless_timeout /*|| (Robot.Vx_sp.full == 258 && Robot.Vy_sp.full == 772)*/)
+	if (free_wheel.low_battery || free_wheel.motor_fault || free_wheel.wireless_timeout || !current_offset_check || (Robot.Vx_sp.full == 258 && Robot.Vy_sp.full == 772))
 	{
 		Robot.W0_sp.byte[high]		= 1;
 		Robot.W0_sp.byte[low ]		= 2;
@@ -313,7 +313,7 @@ inline void read_all_adc(void)
 	adc_m1           = (adc_get_result(&ADCB, ADC_CH1) - adc_offset) / adc_gain ;
 	adc_bandgap      = (adc_get_result(&ADCB, ADC_CH2) - adc_offset) / adc_gain ;
 	adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
-	adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
+	adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 | ADC_CH2);
 }
 
 inline void battery_voltage_update(void)

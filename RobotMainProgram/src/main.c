@@ -135,14 +135,11 @@ int main (void)
 			
 			read_all_adc();
 			battery_voltage_update();
-
 			boost_buck_manager();
 			motors_current_check();
 			data_transmission();
-
 			current_sensor_offset();
-				
-
+			
 			data = new_controller_loop;
 			// PBUG enabling interrupts
 			sei();
@@ -156,4 +153,3 @@ ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 	wireless_connection();
 	data = new_controller_loop;//communication;new_controller_loop ;	
 }
-
