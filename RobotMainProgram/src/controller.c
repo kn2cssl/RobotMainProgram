@@ -174,7 +174,7 @@ void state_feed_back ( void )
 			//emitting saturation
 			if (fabs(u[i][j]) > Robot.bat_v.full)
 			{
-				u[i][j] = sign(u[i][j]) * Robot.bat_v.full ;
+				u[i][j] = sign(u[i][j]) * (Robot.bat_v.full *.997) ;// 0.997 since in transfer function of volt to OCR 100% occurs in 99.7% of full voltage
 			}
 		}
 	}

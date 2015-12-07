@@ -35,6 +35,7 @@
 #include "functions.h"
 
 //TODO All functions should be specified in starting and ending time
+//TODO doxygen
 int main (void)
 {
 	sysclk_init();   //! Initializing system clock
@@ -45,8 +46,6 @@ int main (void)
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
-// 	delay_ms(1);     //! Delay needed for best result in calculating current sensors' offsets
-// 	current_sensor_offset();
 	tc_init();    
 	rtc_init();
  
@@ -84,11 +83,21 @@ int main (void)
 			state_feed_back() ;
 
 			ocr_change();
+			float nominal_v[4] ;
+			float out_l[4];
+			nominal_v[0]= fabs(u[0][0] / Robot.bat_v.full);
+			nominal_v[1]= fabs(u[1][0] / Robot.bat_v.full);
+			nominal_v[2]= fabs(u[2][0] / Robot.bat_v.full);
+			nominal_v[3]= fabs(u[3][0] / Robot.bat_v.full);
+			out_l[0] = (454.2 * nominal_v[0] + 326.3) / (pow(nominal_v[0],2) - 8364.0 * nominal_v[0] + 9120.0) * max_ocr * sign(u[0][0]);
+			out_l[1] = (454.2 * nominal_v[1] + 326.3) / (pow(nominal_v[1],2) - 8364.0 * nominal_v[1] + 9120.0) * max_ocr * sign(u[1][0]);
+			out_l[2] = (454.2 * nominal_v[2] + 326.3) / (pow(nominal_v[2],2) - 8364.0 * nominal_v[2] + 9120.0) * max_ocr * sign(u[2][0]);
+			out_l[3] = (454.2 * nominal_v[3] + 326.3) / (pow(nominal_v[3],2) - 8364.0 * nominal_v[3] + 9120.0) * max_ocr * sign(u[3][0]);
 			
-			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = u[3][0] /Robot.bat_v.full * max_ocr;
+			Robot.W0_sp.full = out_l[0];u[0][0] /Robot.bat_v.full * max_ocr;
+			Robot.W1_sp.full = out_l[1];u[1][0] /Robot.bat_v.full * max_ocr;
+			Robot.W2_sp.full = out_l[2];u[2][0] /Robot.bat_v.full * max_ocr;
+			Robot.W3_sp.full = out_l[3];u[3][0] /Robot.bat_v.full * max_ocr;
 			data = packing_data ;
 			
 		}
