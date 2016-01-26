@@ -170,6 +170,8 @@ void state_feed_back ( void )
 		for (int j = 0 ; j < 1 ; j ++)
 		{
 			u [i][j] = (du [i][j] + ud [i][j]);
+			// 2.8 v is gained with experiment : it should be applied to confront resistive forces
+			u [i][j] += sign(u [i][j]) * 2.9 ;
 			
 			//emitting saturation
 			if (fabs(u[i][j]) > Robot.bat_v.full)
