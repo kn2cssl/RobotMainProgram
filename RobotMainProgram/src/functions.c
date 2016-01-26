@@ -295,8 +295,8 @@ inline void Timer_on(void)
 //running time : about 26400 clk
 inline void Timer_show (void)
 {
-	timer_l = TCE0_CNT ; 
-	timer_h = TCE1_CNT ; 
+	cycle_time_us = TCE1_CNT * 1e+3 + TCE0_CNT * 2 ;
+	cycle_time_s = TCE1_CNT/1000.0 + TCE0_CNT/500000.0 ;
 }
 
 inline void read_all_adc(void)
