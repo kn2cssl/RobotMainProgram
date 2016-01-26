@@ -9,6 +9,7 @@
 
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
+
 #include <math.h>
 #include "functions.h"
 //geometric constants
@@ -17,11 +18,6 @@
 #define a2 135/180*M_PI      // 2.356194490192345   rad
 #define a3 225/180*M_PI      // 3.926990816987241   rad
 #define a4 303.69/180*M_PI   // 5.300390405381579   rad
-
-#define g1 20.01/180*M_PI    // 0.3492403833240653  rad
-#define g2 0/180*M_PI        // 0				   rad
-#define g3 0/180*M_PI        // 0				   rad
-#define g4 20.01/180*M_PI    // 0.3492403833240653  rad
 
 //
 
@@ -33,21 +29,16 @@
 #define cosa1 0.5547  
 #define cosa2 -0.7071 
 #define cosa3 -0.7071 
-#define cosa4 0.5547  
-
-#define cosg1 0.9396 
-#define cosg2 1       
-#define cosg3 1       
-#define cosg4 0.9396  
+#define cosa4 0.5547   
 
 
 //robot constants
-#define N	76/20            //         %
+#define N	3.8              //         %76/20
 #define res 1.2              //       %ohm
 #define km	25.5/1000        //        %Nm/A
-#define kn	374              //        %rpm/V
+#define kn	374.0            //        %rpm/V
 #define kf	0.0001           //        %unknown
-#define ks	0.1              //       %unknown
+#define ks	0.01             //       %unknown
 #define r	28.5/1000        //         %m
 #define J	0.0192           //         %kg*m2%           >>modeling needed
 #define Jm	92.5/1000/10000  //        %kg*m2								//          0.00000925
@@ -66,6 +57,8 @@ void setpoint_generator ( void ) ;
 //run time : 12407 clk
 void state_feed_back ( void ) ;
 
+void state_generator ( void );
+
 void observer ( void ) ;
 
 double sign ( double number ) ;
@@ -74,7 +67,7 @@ void ocr_change(void) ;
 
 extern double Vx , Vy , Wr ;
 
-extern double x[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ;
+extern double x[7][1] , x_OB[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ;
 
 extern double Yd[7] ;
 
@@ -92,5 +85,6 @@ extern double k_sf[4][7] ;
 
 extern double max_ocr ;
 
+extern float cycle_time_s, cycle_time_us;
 
 #endif /* CONTROLLER_H_ */

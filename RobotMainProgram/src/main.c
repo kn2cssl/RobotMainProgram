@@ -34,6 +34,8 @@
 #include "controller.h"
 #include "functions.h"
 
+//TODO All functions should be specified in starting and ending time
+//TODO doxygen
 int main (void)
 {
 	sysclk_init();   //! Initializing system clock
@@ -44,48 +46,58 @@ int main (void)
  	spi_init();      //! Initializing spi
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
-
+	tc_init();    
+	rtc_init();
+ 
 	sei();
 	
 	// complete run time : 23102 clk
 	while(1)
 	{
 
-		if (wireless_time_out > 32000)
+		if (WIRLESS_TIMEOUT_TIMER >= 10)
 		{
 			nrf_init () ;
-			free_wheel = 1 ;
-			wireless_time_out = 0 ;
-			data = packing_data ;//for sending free wheel order to fpga
+			free_wheel.wireless_timeout = true ;
+			WIRLESS_TIMEOUT_TIMER = 0;
+			data = new_controller_loop ;//for sending free wheel order to fpga
+			Robot.wrc ++;
 		}
-		wireless_time_out ++ ;
 
 		// run time : about 19115 clk
 		if (data == new_controller_loop)
 		{
+			// PBUG disabling interrupts
+			cli();
 			Timer_show();
 			Timer_on();
-			Vx = Robot.Vx_sp.full / 1000.0 ;
-			Vy = Robot.Vy_sp.full / 1000.0 ;
-			Wr = Robot.Wr_sp.full / 1000.0 ;
-			x[0][0] = Robot.Vx.full/1000.0 ;
-			x[1][0] = Robot.Vy.full/1000.0 ;
-			x[2][0] = Robot.Wr.full/1000.0 ;
-			x[3][0] = Robot.W0.full ;
-			x[4][0] = Robot.W1.full ;
-			x[5][0] = Robot.W2.full ;
-			x[6][0] = Robot.W3.full ;
+			
+			d_time = timer_h/1000.0 + timer_l/500000.0 ;
+			
+			observer();
+			
+			state_generator();
 			
 			setpoint_generator() ;
 			
 			state_feed_back() ;
 
 			ocr_change();
+			float nominal_v[4] ;
+			float out_l[4];
+			nominal_v[0]= fabs(u[0][0] / Robot.bat_v.full);
+			nominal_v[1]= fabs(u[1][0] / Robot.bat_v.full);
+			nominal_v[2]= fabs(u[2][0] / Robot.bat_v.full);
+			nominal_v[3]= fabs(u[3][0] / Robot.bat_v.full);
+			out_l[0] = (454.2 * nominal_v[0] + 326.3) / (pow(nominal_v[0],2) - 8364.0 * nominal_v[0] + 9120.0) * max_ocr * sign(u[0][0]);
+			out_l[1] = (454.2 * nominal_v[1] + 326.3) / (pow(nominal_v[1],2) - 8364.0 * nominal_v[1] + 9120.0) * max_ocr * sign(u[1][0]);
+			out_l[2] = (454.2 * nominal_v[2] + 326.3) / (pow(nominal_v[2],2) - 8364.0 * nominal_v[2] + 9120.0) * max_ocr * sign(u[2][0]);
+			out_l[3] = (454.2 * nominal_v[3] + 326.3) / (pow(nominal_v[3],2) - 8364.0 * nominal_v[3] + 9120.0) * max_ocr * sign(u[3][0]);
 			
-			Robot.W0_sp.full = u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = u[3][0] /Robot.bat_v.full * max_ocr;
+			Robot.W0_sp.full = out_l[0];u[0][0] /Robot.bat_v.full * max_ocr;
+			Robot.W1_sp.full = out_l[1];u[1][0] /Robot.bat_v.full * max_ocr;
+			Robot.W2_sp.full = out_l[2];u[2][0] /Robot.bat_v.full * max_ocr;
+			Robot.W3_sp.full = out_l[3];u[3][0] /Robot.bat_v.full * max_ocr;
 			data = packing_data ;
 			
 		}
@@ -123,6 +135,14 @@ int main (void)
 			
 			read_all_adc();
 			battery_voltage_update();
+			boost_buck_manager();
+			motors_current_check();
+			data_transmission();
+			current_sensor_offset();
+			
+			data = new_controller_loop;
+			// PBUG enabling interrupts
+			sei();
 		}
 	}
 }
@@ -133,4 +153,3 @@ ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 	wireless_connection();
 	data = new_controller_loop;//communication;new_controller_loop ;	
 }
-

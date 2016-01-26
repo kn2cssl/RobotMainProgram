@@ -10,6 +10,7 @@
 #define FUNCTIONS_H_
 
 #include <asf.h>
+#include "init.h"
 #include "nrf24l01.h"
 #include "controller.h"
 
@@ -23,9 +24,19 @@ void Timer_on (void) ;
 void Timer_show (void) ;
 void read_all_adc(void);
 void battery_voltage_update(void);
+void every_250ms(void);
+void boost_buck_manager(void);
+void motors_current_check(void);
 
 #define high 1
 #define	low	 0
+
+#define KICK_TIME_LIMIT 40//! What should it be??
+#define CHIP_TIME_LIMIT 10//! What should it be??
+#define MAX_CHARGING_TIME 3000//! 3 seconds
+#define BOOST_BUCK_TIMER TCF0_CNT
+#define WIRLESS_TIMEOUT_TIMER RTC.CNT
+
 
 enum Data_Flow {new_wireless_data , new_jyro_data , new_controller_loop , packing_data , communication , unpacking_data , other_programs };
 
@@ -78,17 +89,29 @@ struct Robot_Data
 	HL W2	;
 	HL W3	;
 	
+	HL W0_l	;
+	HL W1_l	;
+	HL W2_l	;
+	HL W3_l	;
+	
+	//motors fault
+	uint16_t W0_warning	;
+	uint16_t W1_warning	;
+	uint16_t W2_warning	;
+	uint16_t W3_warning	;
+	
 	//! Motors' current
-	HL I0;
-	HL I1;
-	HL I2;
-	HL I3;
+	FHL I0;
+	FHL I1;
+	FHL I2;
+	FHL I3;
 	
 	//! MCU's temperature
 	HL MCU_temperature;
 	
 	//! Battery voltage
 	FHL bat_v;
+	HL  batx1000;
 	
 	//! Spin_back's speed setpoint
 	int8_t SB_sp	;
@@ -96,13 +119,26 @@ struct Robot_Data
 	//! Spin_back's speed
 	HL SB	;
 	
+	//! wireless signal_strength
+	uint8_t ss;
+	//! wireless_reset_counter
+	uint8_t wrc; 
+	
+	//! SPARTAN3 & Atxmega64 signal_strength
+	//! Number of sent packet from Atxmega64 to SPARTAN3
+	uint8_t nsp;
+	//! Number of received packet from Atxmega64 to SPARTAN3
+	uint8_t nrp;
+	
+	// Charging time of boost circuit
+	uint8_t ct;
+	
 };
 
 //! FPGA connection variables
 extern uint8_t send_packet[40];
 extern uint8_t receive_packet[40];
 extern int packet_counter ;
-extern uint16_t timer ;
 extern HL temp_data[10];
 
 //! Wireless connection variables
@@ -112,16 +148,37 @@ extern char Address[_Address_Width];
 
 //! System variables
 extern int summer;
-extern int wireless_time_out ;
-extern int free_wheel;
-extern HL number_of_sent_packet  , number_of_received_packet ;
+struct free_wheel_cause
+{
+	bool wireless_timeout ;
+	bool motor_fault ;
+	bool low_battery;
+};
+
+extern uint8_t number_of_sent_packet  , number_of_received_packet ;
 extern enum Data_Flow data;
 extern struct Robot_Data Robot;
-
+extern struct free_wheel_cause free_wheel;
 //! ADC variables
-extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature;
+extern float adc_m0, adc_m1, adc_m2, adc_m3, adc_bat, adc_temperature, adc_bandgap;
+extern float adc_m0_offset, adc_m1_offset, adc_m2_offset, adc_m3_offset;
+extern float adc_gain, adc_offset;
+extern bool current_offset_check ;
+//! Time
+extern uint64_t seconds;
+
+//! boost & buck variables
+struct boost_buck_status
+{
+  bool failure;
+  bool charge_flag;
+  bool kick_flag;
+  bool chip_flag;
+  uint16_t charge_counter;
+  uint8_t charging_time;
+};
 
 //! Test variables
-
-
+extern int test ;
+extern HL tt[5];
 #endif /* FUNCTIONS_H_ */
