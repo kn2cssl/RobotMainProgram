@@ -101,7 +101,7 @@ void state_generator ( void )
 	float sin_alpha = sin(Robot.alpha.full/1000.0);
 	Vx = (  Robot.Vx.full * cos_alpha + Robot.Vy.full * sin_alpha ) / 1000.0;
 	Vy = ( -Robot.Vx.full * sin_alpha + Robot.Vy.full * cos_alpha ) / 1000.0;
-	Wr = Robot.Wr.full / 1000.0;
+	Wr = Robot.Wr.full / 100.0;
 	// 7 set points for system
 	//kinematics rules that should be considered for specifying desired output
 	
