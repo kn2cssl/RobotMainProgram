@@ -67,7 +67,7 @@ double G[7][7]	=  	{{   9.925    ,  1.4835e-15 ,  2.5183e-16 ,   -0.005482 ,  -0
 {   186.35   ,   -207.26   ,    -11.18   ,  -0.38761   ,  0.014367  ,    0.40022  ,   0.066417	 },
 {   219.28   ,    167.31   ,    42.295   ,  -0.12654   ,  -0.38761  ,   0.066417  ,    0.40771	 }};
 	
-float d_time;
+float cycle_time_s, cycle_time_us;
 	
 
 
@@ -203,7 +203,7 @@ void observer ( void )
 				x_temp_2 [i][j] = 0;
 				for (int k = 0 ; k < 7 ; k ++)
 				{
-					x_temp_2 [i][j] += G [i][k] * x_temp_1 [k][j]*d_time;
+					x_temp_2 [i][j] += G [i][k] * x_temp_1 [k][j]*cycle_time_s;
 				}
 /*			}*/
 		}
@@ -217,7 +217,7 @@ void observer ( void )
 			x_temp_3 [i][j] = 0;
 			for (int k = 0 ; k < 7 ; k ++)
 			{
-				x_temp_3 [i][j] += A [i][k] * x_OB [k][j]*d_time;
+				x_temp_3 [i][j] += A [i][k] * x_OB [k][j]*cycle_time_s;
 			}
 /*		}*/
 	}
@@ -230,7 +230,7 @@ void observer ( void )
 			int j = 0;
 			for (int k = 0 ; k < 4 ; k ++)
 			{
-				x_OB [i][j] += B [i][k] * ud [k][j]*d_time;
+				x_OB [i][j] += B [i][k] * ud [k][j]*cycle_time_s;
 			}
 			x_OB [i][j] += x_temp_2[i][j] + x_temp_3[i][j];
 /*		}*/
