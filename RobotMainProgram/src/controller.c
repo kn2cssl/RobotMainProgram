@@ -294,6 +294,7 @@ double sign (double number)
 
 inline void ocr_change(void)
 {
+	// TODO correct it
 	Robot.orc_length=127;
 	max_ocr = (Robot.orc_length << 8) - 1 ;
 }
