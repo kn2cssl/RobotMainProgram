@@ -72,8 +72,6 @@ int main (void)
 			Timer_show();
 			Timer_on();
 			
-			d_time = timer_h/1000.0 + timer_l/500000.0 ;
-			
 			observer();
 			
 			state_generator();

@@ -199,6 +199,11 @@ void current_sensor_offset (void)
 			adc_m2_offset       = (adc_m2_offset	 / 50 - adc_offset) / adc_gain;
 			adc_m3_offset       = (adc_m3_offset     / 50 - adc_offset) / adc_gain;
 			}
+			
+			if ( (abs(Robot.W0.full)> 5) || (abs(Robot.W1.full)> 5) || (abs(Robot.W2.full)> 5) || (abs(Robot.W3.full)> 5) )
+			{
+				current_offset_check = false;
+			}
 	}
 }
 
