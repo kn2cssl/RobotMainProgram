@@ -110,7 +110,7 @@ inline void data_transmission (void)
 	show[8].full =x_OB[1][0]*1000 ;
 	show[9].full =x_OB[2][0]*1000 ;
 	
-	show[10].full = d_time * 1e+5 ;
+	show[10].full = cycle_time_us ;
 
 	//! Debug data
 	spi_tx_buf[0]  = show[10].byte[high];//
@@ -430,7 +430,8 @@ inline void boost_buck_manager(void)
 		bbs.charge_flag = false;
 		if (BOOST_BUCK_TIMER > 1000)
 		{
-			ioport_toggle_pin(BUZZER);
+			// TODO turn on the buzzer
+			//ioport_toggle_pin(BUZZER);
 			BOOST_BUCK_TIMER = 0;
 		}
 		
