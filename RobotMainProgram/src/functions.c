@@ -373,7 +373,7 @@ inline void boost_buck_manager(void)
 		if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
 		{
 			CHARGE_PERIOD(47);
-			CHARGE_DUTY_CYCLE(36);
+			CHARGE_DUTY_CYCLE(40);
 			CHARGE_START;
 			
 			if (BOOST_BUCK_TIMER > MAX_CHARGING_TIME)
