@@ -211,7 +211,7 @@ void current_sensor_offset (void)
 void tc_init(void)
 {
   /* Boost & buck pins:
-   * charge : C2
+   * charge & kick : C2
    *(other TC settings should be done according to the type of use )
    */
   tc_enable(&TCC0);
@@ -219,7 +219,7 @@ void tc_init(void)
   tc_write_clock_source(&TCC0, TC_CLKSEL_DIV64_gc);
   
  
-  /** Charge : pin C4 (kick)
+  /** chip : pin C4 
 	* (other TC settings should be done according to the type of use )
 	*/
   tc_enable(&TCC1);
