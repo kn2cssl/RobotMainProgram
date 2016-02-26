@@ -372,8 +372,8 @@ inline void boost_buck_manager(void)
 			
 		if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
 		{
-			CHARGE_PERIOD(47);
-			CHARGE_DUTY_CYCLE(40);
+			CHARGE_PERIOD(376);
+			CHARGE_DUTY_CYCLE(365);
 			CHARGE_START;
 			
 			if (BOOST_BUCK_TIMER > MAX_CHARGING_TIME)
@@ -388,8 +388,8 @@ inline void boost_buck_manager(void)
 			//! Kick
 			if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag)
 			{
-				KICK_PERIOD(123);
-				KICK_DUTY_CYCLE(123);
+				KICK_PERIOD(100);
+				KICK_DUTY_CYCLE(100);
 				KICK_START;
 				BOOST_BUCK_TIMER = 0;
 				bbs.kick_flag = true;
@@ -431,7 +431,7 @@ inline void boost_buck_manager(void)
 		if (BOOST_BUCK_TIMER > 1000)
 		{
 			// TODO turn on the buzzer
-			//ioport_toggle_pin(BUZZER);
+			ioport_toggle_pin(BUZZER);
 			BOOST_BUCK_TIMER = 0;
 		}
 		

@@ -216,7 +216,7 @@ void tc_init(void)
    */
   tc_enable(&TCC0);
   tc_set_wgm(&TCC0, TC_WG_SS);
-  tc_write_clock_source(&TCC0, TC_CLKSEL_DIV64_gc);
+  tc_write_clock_source(&TCC0, TC_CLKSEL_DIV8_gc);
   
  
   /** chip : pin C4 
