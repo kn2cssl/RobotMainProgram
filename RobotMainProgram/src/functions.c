@@ -359,7 +359,7 @@ inline void boost_buck_manager(void)
 			if (bbs.charge_flag)
 			{
 				bbs.charge_counter++;
-				if (bbs.charge_counter>4000)
+				if (bbs.charge_counter>300)
 				{
 					bbs.charge_counter = 0 ;
 					bbs.charge_flag = false ;
@@ -376,6 +376,8 @@ inline void boost_buck_manager(void)
 			CHARGE_DUTY_CYCLE(365);
 			CHARGE_START;
 			
+			// TODO it may create a delay before kick or chip
+			bbs.charge_flag = true;
 			if (BOOST_BUCK_TIMER > MAX_CHARGING_TIME)
 			{
 				bbs.failure = true ;
@@ -386,7 +388,7 @@ inline void boost_buck_manager(void)
 			CHARGE_STOP;
 				
 			//! Kick
-			if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag)
+			if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 			{
 				KICK_PERIOD(100);
 				KICK_DUTY_CYCLE(100);
@@ -404,7 +406,7 @@ inline void boost_buck_manager(void)
 			}
 				
 			//! Chip
-			if (Robot.CHIP && !bbs.kick_flag && !bbs.chip_flag)
+			if (Robot.CHIP && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 			{
 				CHIP_PERIOD(123);
 				CHIP_DUTY_CYCLE(123);
