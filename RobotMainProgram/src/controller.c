@@ -11,6 +11,8 @@ double Vx , Vy , Wr ;
 
 double x[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ,x_OB[7][1] , x_temp_1[7][1] , x_temp_2[7][1] ,x_temp_3[7][1] ;
 
+double camera_d[3][1];
+
 //Xdot = A*X + B*U
 //Y = C*X + D*U
 
@@ -126,6 +128,14 @@ void state_generator ( void )
 	x[6][0] = Robot.W3.full ;
 	
 	// data checking 1 : data is produced correctly (checked with model in MATLAB)
+}
+
+void camera_data ( void )
+{
+		float cos_alpha = cos(Robot.alpha.full/1000.0);
+		float sin_alpha = sin(Robot.alpha.full/1000.0);
+		camera_d[0][0] = (x_OB[0][0]*1000 / sin_alpha - x_OB[1][0]*1000/ cos_alpha ) / (cos_alpha / sin_alpha  + sin_alpha/ cos_alpha )  ;
+	
 }
 
 void state_feed_back ( void )

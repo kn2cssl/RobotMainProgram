@@ -59,6 +59,8 @@ void state_feed_back ( void ) ;
 
 void state_generator ( void );
 
+void camera_data ( void );
+
 void observer ( void ) ;
 
 double sign ( double number ) ;
@@ -68,6 +70,8 @@ void ocr_change(void) ;
 extern double Vx , Vy , Wr ;
 
 extern double x[7][1] , x_OB[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ;
+
+extern double camera_d[3][1];
 
 extern double Yd[7] ;
 
