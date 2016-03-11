@@ -110,7 +110,7 @@ inline void data_transmission (void)
  	show[8].full = Robot.I3.full;
 	show[9].full = Robot.wrc;
 	
-	show[10].full = Robot.MCU_temperature ;
+	show[10].full = Robot.MCU_temperature.full ;
 
 	//! Debug data
 	spi_tx_buf[0]  = show[0].byte[high];//

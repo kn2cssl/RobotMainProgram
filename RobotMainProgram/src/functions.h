@@ -64,7 +64,6 @@ struct Robot_Data
 	uint8_t KICK;
 	uint8_t CHIP;
 	uint8_t SPIN;
-	uint8_t free_wheel ;
 	uint8_t ASK;
 	
 	//! GYRO data
@@ -122,7 +121,7 @@ struct Robot_Data
 	//! SPARTAN3 & Atxmega64 signal_strength
 	//! Number of sent packet from Atxmega64 to SPARTAN3
 	uint8_t nsp;
-	//! Number of received packet from Atxmega64 to SPARTAN3
+	//! Number of received packet from SPARTAN3 
 	uint8_t nrp;
 	
 	// Charging time of boost circuit
@@ -170,7 +169,6 @@ struct boost_buck_status
   bool kick_flag;
   bool chip_flag;
   uint16_t charge_counter;
-  uint8_t charging_time;
 };
 
 //! Test variables
