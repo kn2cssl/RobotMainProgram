@@ -333,7 +333,7 @@ inline void battery_voltage_update(void)
 	}
 }
 
-// PBUG function every_250ms is an interrupting one, maybe i disable interrupts in main loop at some points, Attention!!
+
 inline void every_250ms(void)
 {
 	seconds++;  
@@ -432,7 +432,6 @@ inline void boost_buck_manager(void)
 		bbs.charge_flag = false;
 		if (BOOST_BUCK_TIMER > 1000)
 		{
-			// TODO turn on the buzzer
 			ioport_toggle_pin(BUZZER);
 			BOOST_BUCK_TIMER = 0;
 		}
@@ -442,7 +441,7 @@ inline void boost_buck_manager(void)
   
 }
 
-// TODO motors_current_check(void) is not completed and is not tested
+
 inline void motors_current_check(void)
 {
 	if (current_offset_check)
