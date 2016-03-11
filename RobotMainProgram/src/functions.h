@@ -33,7 +33,7 @@ void motors_current_check(void);
 
 #define KICK_TIME_LIMIT 300//! What should it be??
 #define CHIP_TIME_LIMIT 10//! What should it be??
-#define MAX_CHARGING_TIME 3000//! 3 seconds
+#define MAX_CHARGING_TIME 5000//! 3 seconds
 #define BOOST_BUCK_TIMER TCF0_CNT
 #define WIRLESS_TIMEOUT_TIMER RTC.CNT
 
