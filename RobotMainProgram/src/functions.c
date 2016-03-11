@@ -363,7 +363,7 @@ inline void boost_buck_manager(void)
 				{
 					bbs.charge_counter = 0 ;
 					bbs.charge_flag = false ;
-					bbs.charging_time = BOOST_BUCK_TIMER ;
+					Robot.ct = BOOST_BUCK_TIMER ;
 					BOOST_BUCK_TIMER = 0 ;
 				}
 			}
