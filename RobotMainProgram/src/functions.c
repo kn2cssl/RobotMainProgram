@@ -97,56 +97,55 @@ inline void wireless_connection ( void )
 inline void data_transmission (void)
 {
 	HL show[11];
-	show[0].full =u[0][0]*1000 ;
-	show[1].full =u[1][0]*1000 ;
-	show[2].full =u[2][0]*1000 ;
-	show[3].full =u[3][0]*1000 ;
+	show[0].full = cycle_time_us ;
 	
-	show[4].full =x[0][0]*1000 ;
-	show[5].full =x[1][0]*1000 ;
-	show[6].full =x[2][0]*1000 ;
+	show[1].full = free_wheel.wireless_timeout;
+	show[2].full = free_wheel.motor_fault;
+	show[3].full = free_wheel.low_battery;
 	
-	show[7].full =x_OB[0][0]*1000 ;
-	show[8].full =x_OB[1][0]*1000 ;
-	show[9].full =x_OB[2][0]*1000 ;
+	show[4].full = Robot.ct;
+ 	show[5].full = Robot.nsp;
+ 	show[6].full = Robot.nrp;	
+ 	show[7].full = Robot.ss;
+ 	show[8].full = Robot.I3.full;
+	show[9].full = Robot.wrc;
 	
-	show[10].full = cycle_time_us ;
+	show[10].full = Robot.MCU_temperature ;
 
 	//! Debug data
-	spi_tx_buf[0]  = show[10].byte[high];//
-	spi_tx_buf[1]  = show[10].byte[low]; //
-	spi_tx_buf[2]  = show[0].byte[high];//
-	spi_tx_buf[3]  = show[0].byte[low];	//
-	spi_tx_buf[4]  = show[1].byte[high];//
-	spi_tx_buf[5]  = show[1].byte[low];	//
-	spi_tx_buf[6]  = show[2].byte[high];//
-	spi_tx_buf[7]  = show[2].byte[low]; //
+	spi_tx_buf[0]  = show[0].byte[high];//
+	spi_tx_buf[1]  = show[0].byte[low]; //
+	spi_tx_buf[2]  = show[1].byte[high];//
+	spi_tx_buf[3]  = show[1].byte[low];	//
+	spi_tx_buf[4]  = show[2].byte[high];//
+	spi_tx_buf[5]  = show[2].byte[low];	//
+	spi_tx_buf[6]  = show[3].byte[high];//
+	spi_tx_buf[7]  = show[3].byte[low]; //
 	//! Monitoring data
-	spi_tx_buf[8]  = show[3].byte[high];//Robot.Vx.byte[high];   //
-	spi_tx_buf[9]  = show[3].byte[low]; //Robot.Vx.byte[low];    //
-	spi_tx_buf[10] = show[4].byte[high];//Robot.Vy.byte[high];   //
-	spi_tx_buf[11] = show[4].byte[low];	//Robot.Vy.byte[low];    //
-	spi_tx_buf[12] = show[5].byte[high];//Robot.Wr.byte[high];   //
-	spi_tx_buf[13] = show[5].byte[low];	//Robot.Wr.byte[low];    //
-	spi_tx_buf[14] = show[6].byte[high];//
-	spi_tx_buf[15] = show[6].byte[low]; //
-	spi_tx_buf[16] = show[7].byte[high];//
-	spi_tx_buf[17] = show[7].byte[low]; //
-	spi_tx_buf[18] = show[8].byte[high];//
-	spi_tx_buf[19] = show[8].byte[low]; //
-	spi_tx_buf[20] = show[9].byte[high];
-	spi_tx_buf[21] = show[9].byte[low]; 
-	spi_tx_buf[22] = Robot.W0.byte[high];
-	spi_tx_buf[23] = Robot.W0.byte[low];
-	spi_tx_buf[24] = Robot.W1.byte[high];
-	spi_tx_buf[25] = Robot.W1.byte[low];
-	spi_tx_buf[26] = Robot.W2.byte[high];
-	spi_tx_buf[27] = Robot.W2.byte[low];
-	spi_tx_buf[28] = Robot.W3.byte[high];
-	spi_tx_buf[29] = Robot.W3.byte[low];
-	spi_tx_buf[30] = Robot.batx1000.byte[high];        //.nsp ;
-	spi_tx_buf[31] = Robot.batx1000.byte[low];         //.nrp ;
-	
+	spi_tx_buf[8]  = show[4].byte[high];
+	spi_tx_buf[9]  = show[4].byte[low]; 
+	spi_tx_buf[10] = show[5].byte[high];
+	spi_tx_buf[11] = show[5].byte[low];	
+	spi_tx_buf[12] = show[6].byte[high];
+	spi_tx_buf[13] = show[6].byte[low];	
+	spi_tx_buf[14] = show[7].byte[high];
+	spi_tx_buf[15] = show[7].byte[low]; 
+	spi_tx_buf[16] = show[8].byte[high];
+	spi_tx_buf[17] = show[8].byte[low]; 
+	spi_tx_buf[18] = show[9].byte[high];
+	spi_tx_buf[19] = show[9].byte[low]; 
+	spi_tx_buf[20] = show[10].byte[high];
+	spi_tx_buf[21] = show[10].byte[low]; 
+	spi_tx_buf[22] = Robot.I0.byte[high];
+	spi_tx_buf[23] = Robot.I0.byte[low];
+	spi_tx_buf[24] = Robot.I1.byte[high];
+	spi_tx_buf[25] = Robot.I1.byte[low];
+	spi_tx_buf[26] = Robot.I2.byte[high];
+	spi_tx_buf[27] = Robot.I2.byte[low];
+	spi_tx_buf[28] = Robot.I3.byte[high];
+	spi_tx_buf[29] = Robot.I3.byte[low];
+	spi_tx_buf[30] = Robot.batx1000.byte[high];
+	spi_tx_buf[31] = Robot.batx1000.byte[low]; 
 }
 
 // run time : 457 clk
