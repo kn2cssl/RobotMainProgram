@@ -125,7 +125,7 @@ struct Robot_Data
 	uint8_t nrp;
 	
 	// Charging time of boost circuit
-	uint8_t ct;
+	uint16_t ct;
 	
 };
 
