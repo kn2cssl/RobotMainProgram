@@ -89,11 +89,6 @@ struct Robot_Data
 	HL W2	;
 	HL W3	;
 	
-	HL W0_l	;
-	HL W1_l	;
-	HL W2_l	;
-	HL W3_l	;
-	
 	//motors fault
 	uint16_t W0_warning	;
 	uint16_t W1_warning	;
