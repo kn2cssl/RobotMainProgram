@@ -64,11 +64,10 @@ int main (void)
 			Robot.wrc ++;
 		}
 
+		// TODO Check whether it is necessary to turn off interrupts in main loop of program or not
 		// run time : about 19115 clk
 		if (data == new_controller_loop)
 		{
-			// PBUG disabling interrupts
-			cli();
 			Timer_show();
 			Timer_on();
 			
@@ -139,8 +138,6 @@ int main (void)
 			current_sensor_offset();
 			
 			data = new_controller_loop;
-			// PBUG enabling interrupts
-			sei();
 		}
 	}
 }
