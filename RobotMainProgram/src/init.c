@@ -34,8 +34,10 @@ void port_init(void)
 	ioport_set_value(NRF24L01_SCK_LINE , IOPORT_PIN_LEVEL_HIGH);
 	
 	ioport_configure_pin(NRF24L01_IRQ_LINE, PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc);
+	ioport_configure_pin(KICK_SENSOR,PORT_ISC_FALLING_gc);
 	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc;
 	PORTD.INT0MASK = ioport_pin_to_mask(NRF24L01_IRQ_LINE);
+	PORTD.INT1MASK = ioport_pin_to_mask(KICK_SENSOR);
 }
 
 void spi_init(void)
