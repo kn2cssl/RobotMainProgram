@@ -32,6 +32,7 @@ int main (void)
 	// complete run time : 23102 clk
 	while(1)
 	{
+		ioport_set_pin_level(LED_GREEN,ioport_get_pin_level(KICK_SENSOR));
 
 		if (WIRLESS_TIMEOUT_TIMER >= 10)
 		{
@@ -128,13 +129,14 @@ ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 	wireless_connection();
 	data = new_controller_loop;//communication;new_controller_loop ;	
 }
-
+	
 ISR(PORTD_INT1_vect){
-
-	if (Robot.KICK>100 && Robot.KICK<200 && (Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
+	if (Robot.KICK>100 && Robot.KICK<=200 && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 	{
+		KICK_PERIOD(100);
 		KICK_START;
 		KICK_DUTY_CYCLE(100);
 		BOOST_BUCK_TIMER = 0;
 		bbs.kick_flag = true;
 	}
+}

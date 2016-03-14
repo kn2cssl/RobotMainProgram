@@ -387,15 +387,13 @@ inline void boost_buck_manager(void)
 			CHARGE_STOP;
 				
 			//! Kick
-			if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
+			if (((Robot.KICK >0 && Robot.KICK <= 100) || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 			{
 				KICK_PERIOD(100);
-				if (Robot.KICK<100){
 				KICK_DUTY_CYCLE(100);
 				KICK_START;
 				BOOST_BUCK_TIMER = 0;
 				bbs.kick_flag = true;
-				}
 			}
 				
 			if (bbs.kick_flag && (BOOST_BUCK_TIMER > KICK_TIME_LIMIT))
