@@ -358,7 +358,7 @@ inline void boost_buck_manager(void)
 			if (bbs.charge_flag)
 			{
 				bbs.charge_counter++;
-				if (bbs.charge_counter>300)
+				if (bbs.charge_counter>100)
 				{
 					bbs.charge_counter = 0 ;
 					bbs.charge_flag = false ;
@@ -371,8 +371,8 @@ inline void boost_buck_manager(void)
 			
 		if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
 		{
-			CHARGE_PERIOD(19500);
-			CHARGE_DUTY_CYCLE(19490);
+			CHARGE_PERIOD(300);
+			CHARGE_DUTY_CYCLE(280);
 			CHARGE_START;
 			
 			// TODO it may create a delay before kick or chip
@@ -472,7 +472,7 @@ inline void motors_current_check(void)
 		if ( fabs(Robot.I3.full)>0.7) Robot.W3_warning += fabs(Robot.I3.full) * 5;
 		else if(Robot.W3_warning) Robot.W3_warning --;
 		
-		if(Robot.W0_warning > 60000 || Robot.W1_warning > 60000 || Robot.W2_warning > 60000 || Robot.W3_warning > 60000)
+		if(Robot.W0_warning > 20000 || Robot.W1_warning > 20000 || Robot.W2_warning > 20000 || Robot.W3_warning > 20000)
 		{
 			free_wheel.motor_fault = true;
 		}

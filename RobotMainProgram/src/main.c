@@ -134,8 +134,8 @@ ISR(PORTD_INT1_vect){
 	if (Robot.KICK>100 && Robot.KICK<=200 && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 	{
 		KICK_PERIOD(100);
-		KICK_START;
 		KICK_DUTY_CYCLE(100);
+		KICK_START;
 		BOOST_BUCK_TIMER = 0;
 		bbs.kick_flag = true;
 	}
