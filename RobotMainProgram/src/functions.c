@@ -263,7 +263,18 @@ inline void data_unpacking (void)
 		Robot.W2.full = temp_data[2].full ;
 		Robot.W3.full = temp_data[3].full ;
 		Robot.SB.full = temp_data[4].full ;
-		number_of_received_packet ++ ;
+		if(MAKsumA == 0 && MAKsumB == 0)
+		{
+			if (!(temp_data[0].full == 0 && temp_data[1].full == 0 && temp_data[2].full == 0 && temp_data[3].full == 0 && temp_data[4].full == 0))
+			{
+				number_of_received_packet ++ ;
+			}
+		}
+		else
+		{
+			number_of_received_packet ++ ;
+		}
+		
 	}
 }
 
