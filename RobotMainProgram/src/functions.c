@@ -401,6 +401,11 @@ inline void boost_buck_manager(void)
 			if (((Robot.KICK >0 && Robot.KICK <= 100) || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 			{
 				KICK_PERIOD(100);
+				KICK_DUTY_CYCLE(Robot.KICK);
+				if (ioport_get_pin_level(BIG_BUTTON))
+				{
+					KICK_DUTY_CYCLE(100);
+				}
 				KICK_START;
 				BOOST_BUCK_TIMER = 0;
 				bbs.kick_flag = true;
