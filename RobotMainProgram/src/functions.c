@@ -96,7 +96,7 @@ inline void wireless_connection ( void )
 // run time : 2276 clk
 inline void data_transmission (void)
 {
-	HL show[11];
+	HL show[16];
 	show[0].full = cycle_time_us ;
 	
 	show[1].full = free_wheel.wireless_timeout;
@@ -111,6 +111,11 @@ inline void data_transmission (void)
 	show[9].full = Robot.wrc;
 	
 	show[10].full = Robot.MCU_temperature.full ;
+	
+	show[11].full = (int)(Robot.I0.full*1000) ;
+	show[12].full = (int)(Robot.I1.full*1000) ;
+	show[13].full = (int)(Robot.I2.full*1000) ;
+	show[14].full = (int)(Robot.I3.full*1000) ;
 
 	//! Debug data
 	spi_tx_buf[0]  = show[0].byte[high];//
@@ -136,14 +141,14 @@ inline void data_transmission (void)
 	spi_tx_buf[19] = show[9].byte[low]; 
 	spi_tx_buf[20] = show[10].byte[high];
 	spi_tx_buf[21] = show[10].byte[low]; 
-	spi_tx_buf[22] = Robot.I0.byte[high];
-	spi_tx_buf[23] = Robot.I0.byte[low];
-	spi_tx_buf[24] = Robot.I1.byte[high];
-	spi_tx_buf[25] = Robot.I1.byte[low];
-	spi_tx_buf[26] = Robot.I2.byte[high];
-	spi_tx_buf[27] = Robot.I2.byte[low];
-	spi_tx_buf[28] = Robot.I3.byte[high];
-	spi_tx_buf[29] = Robot.I3.byte[low];
+	spi_tx_buf[22] = show[11].byte[high];
+	spi_tx_buf[23] = show[11].byte[low];
+	spi_tx_buf[24] = show[12].byte[high];
+	spi_tx_buf[25] = show[12].byte[low]; 
+	spi_tx_buf[26] = show[13].byte[high];
+	spi_tx_buf[27] = show[13].byte[low]; 
+	spi_tx_buf[28] = show[14].byte[high];
+	spi_tx_buf[29] = show[14].byte[low]; 
 	spi_tx_buf[30] = Robot.batx1000.byte[high];
 	spi_tx_buf[31] = Robot.batx1000.byte[low]; 
 }
@@ -401,10 +406,16 @@ inline void boost_buck_manager(void)
 			if (((Robot.KICK >0 && Robot.KICK <= 100) || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 			{
 				KICK_PERIOD(100);
-				KICK_DUTY_CYCLE(Robot.KICK);
+				
 				if (ioport_get_pin_level(BIG_BUTTON))
 				{
 					KICK_DUTY_CYCLE(100);
+					bbs.lko = button_kick;
+				}
+				else
+				{
+					KICK_DUTY_CYCLE(Robot.KICK);
+					bbs.lko = kick ;
 				}
 				KICK_START;
 				BOOST_BUCK_TIMER = 0;

@@ -135,6 +135,7 @@ ISR(PORTD_INT1_vect){
 	{
 		KICK_PERIOD(100);
 		KICK_DUTY_CYCLE(Robot.KICK - 100);
+		bbs.lko = sensor_kick ;
 		KICK_START;
 		BOOST_BUCK_TIMER = 0;
 		bbs.kick_flag = true;

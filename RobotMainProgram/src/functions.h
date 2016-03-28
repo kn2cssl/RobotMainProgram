@@ -162,12 +162,14 @@ extern bool current_offset_check ;
 extern uint64_t seconds;
 
 //! boost & buck variables
+enum last_kick_order {no_order ,sensor_kick ,kick , button_kick};
 struct boost_buck_status
 {
   bool failure;
   bool charge_flag;
   bool kick_flag;
   bool chip_flag;
+  enum last_kick_order lko;
   uint16_t charge_counter;
 };
 extern struct boost_buck_status bbs;
