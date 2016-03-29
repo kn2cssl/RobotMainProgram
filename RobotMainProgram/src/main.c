@@ -34,7 +34,7 @@ int main (void)
 	{
 		ioport_set_pin_level(LED_GREEN,ioport_get_pin_level(KICK_SENSOR));
 
-		if (WIRLESS_TIMEOUT_TIMER >= 10)
+		if (WIRLESS_TIMEOUT_TIMER >= 40)
 		{
 			cli();
 			nrf_init () ;
