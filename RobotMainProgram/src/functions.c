@@ -367,7 +367,7 @@ inline void every_250ms(void)
 // TODO all periods and duty cycles should be chosen carefully (in boost_buck_manager)
 inline void boost_buck_manager(void)
 {
-	if (!bbs.failure)
+	if (!bbs.failure && !bbs.dont_charge)
 	{
 		//! calculating charging time
 		if (ioport_get_pin_level(CHARGE_LIMIT))
@@ -429,6 +429,10 @@ inline void boost_buck_manager(void)
 				BOOST_BUCK_TIMER = 0;
 				bbs.kick_flag = false;
 				bbs.charge_flag = true;
+				if (bbs.lko == button_kick)
+				{
+					bbs.dont_charge = true;
+				}
 			}
 				
 			//! Chip

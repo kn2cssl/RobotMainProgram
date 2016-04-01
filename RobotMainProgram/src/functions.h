@@ -169,6 +169,7 @@ struct boost_buck_status
   bool charge_flag;
   bool kick_flag;
   bool chip_flag;
+  bool dont_charge;
   enum last_kick_order lko;
   uint16_t charge_counter;
 };
