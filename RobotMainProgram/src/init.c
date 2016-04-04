@@ -181,6 +181,7 @@ void current_sensor_offset (void)
 	{
 		if ( (abs(Robot.W0.full)< 5) && (abs(Robot.W1.full)< 5) && (abs(Robot.W2.full)< 5) && (abs(Robot.W3.full)< 5) )
 		{
+			delay_ms(50);
 			current_offset_check = true;
 			for (int i=50; i ; i-- )
 			{
