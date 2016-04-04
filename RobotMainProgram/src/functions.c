@@ -491,16 +491,16 @@ inline void motors_current_check(void)
 		// 	i_model_M2 = (float) (u[2][0] - Robot.W2.full*N/ kn) / res ;
 		// 	i_model_M3 = (float) (u[3][0] - Robot.W3.full*N/ kn) / res ;
 
-		if ( fabs(Robot.I0.full)>1) Robot.W0_warning += fabs(Robot.I0.full) * 5;
+		if ( fabs(Robot.I0.full)>2.5) Robot.W0_warning += fabs(Robot.I0.full) * 5;
 		else if(Robot.W0_warning) Robot.W0_warning --;
 		
-		if ( fabs(Robot.I1.full)>1) Robot.W1_warning += fabs(Robot.I1.full) * 5;
+		if ( fabs(Robot.I1.full)>2.5) Robot.W1_warning += fabs(Robot.I1.full) * 5;
 		else if(Robot.W1_warning) Robot.W1_warning --;
 		
-		if ( fabs(Robot.I2.full)>1) Robot.W2_warning += fabs(Robot.I2.full) * 5;
+		if ( fabs(Robot.I2.full)>2.5) Robot.W2_warning += fabs(Robot.I2.full) * 5;
 		else if(Robot.W2_warning) Robot.W2_warning --;
 		
-		if ( fabs(Robot.I3.full)>1) Robot.W3_warning += fabs(Robot.I3.full) * 5;
+		if ( fabs(Robot.I3.full)>2.5) Robot.W3_warning += fabs(Robot.I3.full) * 5;
 		else if(Robot.W3_warning) Robot.W3_warning --;
 		
 		if(Robot.W0_warning > 20000 || Robot.W1_warning > 20000 || Robot.W2_warning > 20000 || Robot.W3_warning > 20000)
