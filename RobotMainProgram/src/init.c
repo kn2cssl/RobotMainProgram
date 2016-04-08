@@ -34,8 +34,10 @@ void port_init(void)
 	ioport_set_value(NRF24L01_SCK_LINE , IOPORT_PIN_LEVEL_HIGH);
 	
 	ioport_configure_pin(NRF24L01_IRQ_LINE, PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc);
-	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc;
+	ioport_configure_pin(KICK_SENSOR,PORT_ISC_FALLING_gc);
+	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc | PORT_INT1LVL_HI_gc;
 	PORTD.INT0MASK = ioport_pin_to_mask(NRF24L01_IRQ_LINE);
+	PORTD.INT1MASK = ioport_pin_to_mask(KICK_SENSOR);
 }
 
 void spi_init(void)
@@ -179,6 +181,7 @@ void current_sensor_offset (void)
 	{
 		if ( (abs(Robot.W0.full)< 5) && (abs(Robot.W1.full)< 5) && (abs(Robot.W2.full)< 5) && (abs(Robot.W3.full)< 5) )
 		{
+			delay_ms(50);
 			current_offset_check = true;
 			for (int i=50; i ; i-- )
 			{
@@ -211,7 +214,7 @@ void current_sensor_offset (void)
 void tc_init(void)
 {
   /* Boost & buck pins:
-   * charge : C2
+   * charge & kick : C2
    *(other TC settings should be done according to the type of use )
    */
   tc_enable(&TCC0);
@@ -219,7 +222,7 @@ void tc_init(void)
   tc_write_clock_source(&TCC0, TC_CLKSEL_DIV64_gc);
   
  
-  /** Charge : pin C4 (kick)
+  /** chip : pin C4 
 	* (other TC settings should be done according to the type of use )
 	*/
   tc_enable(&TCC1);

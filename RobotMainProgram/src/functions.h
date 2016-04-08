@@ -31,9 +31,9 @@ void motors_current_check(void);
 #define high 1
 #define	low	 0
 
-#define KICK_TIME_LIMIT 40//! What should it be??
-#define CHIP_TIME_LIMIT 10//! What should it be??
-#define MAX_CHARGING_TIME 3000//! 3 seconds
+#define KICK_TIME_LIMIT 300//! What should it be??
+#define CHIP_TIME_LIMIT 300//! What should it be??
+#define MAX_CHARGING_TIME 7000//! 7 seconds
 #define BOOST_BUCK_TIMER TCF0_CNT
 #define WIRLESS_TIMEOUT_TIMER RTC.CNT
 
@@ -64,7 +64,6 @@ struct Robot_Data
 	uint8_t KICK;
 	uint8_t CHIP;
 	uint8_t SPIN;
-	uint8_t free_wheel ;
 	uint8_t ASK;
 	
 	//! GYRO data
@@ -88,11 +87,6 @@ struct Robot_Data
 	HL W1	;
 	HL W2	;
 	HL W3	;
-	
-	HL W0_l	;
-	HL W1_l	;
-	HL W2_l	;
-	HL W3_l	;
 	
 	//motors fault
 	uint16_t W0_warning	;
@@ -127,11 +121,11 @@ struct Robot_Data
 	//! SPARTAN3 & Atxmega64 signal_strength
 	//! Number of sent packet from Atxmega64 to SPARTAN3
 	uint8_t nsp;
-	//! Number of received packet from Atxmega64 to SPARTAN3
+	//! Number of received packet from SPARTAN3 
 	uint8_t nrp;
 	
 	// Charging time of boost circuit
-	uint8_t ct;
+	uint16_t ct;
 	
 };
 
@@ -168,15 +162,18 @@ extern bool current_offset_check ;
 extern uint64_t seconds;
 
 //! boost & buck variables
+enum last_kick_order {no_order ,sensor_kick ,kick , button_kick};
 struct boost_buck_status
 {
   bool failure;
   bool charge_flag;
   bool kick_flag;
   bool chip_flag;
+  bool dont_charge;
+  enum last_kick_order lko;
   uint16_t charge_counter;
-  uint8_t charging_time;
 };
+extern struct boost_buck_status bbs;
 
 //! Test variables
 extern int test ;
