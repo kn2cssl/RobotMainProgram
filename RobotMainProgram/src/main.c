@@ -12,7 +12,6 @@
 #include "functions.h"
 
 //TODO All functions should be specified in starting and ending time
-//TODO doxygen
 int main (void)
 {
 	sysclk_init();   //! Initializing system clock
@@ -20,7 +19,7 @@ int main (void)
 	pmic_init();     //! Enabling all interrupt levels
  	port_init();     //! Initializing ports
 	robot_id_set();  //! Setting robot id
- 	spi_init();      //! Initializing spi
+ 	spi_init();      //! Initializing SPI
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
 	tc_init();    
@@ -41,7 +40,7 @@ int main (void)
 			sei();
 			free_wheel.wireless_timeout = true ;
 			WIRLESS_TIMEOUT_TIMER = 0;
-			data = new_controller_loop ;//for sending free wheel order to fpga
+			data = new_controller_loop ;//for sending free wheel order to FPGA
 			Robot.wrc ++;
 		}
 
@@ -127,7 +126,7 @@ int main (void)
 ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 {
 	wireless_connection();
-	data = new_controller_loop;//communication;new_controller_loop ;	
+	data = new_controller_loop;
 }
 	
 ISR(PORTD_INT1_vect){

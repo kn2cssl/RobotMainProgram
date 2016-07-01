@@ -12,15 +12,6 @@
 
 void port_init(void)
 {
-// 	ioport_init();
-// 	ioport_set_port_dir(IOPORT_PORTA, MASK_PORTA, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTB, MASK_PORTB, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTC, MASK_PORTC, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTD, MASK_PORTD, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTE, MASK_PORTE, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTF, MASK_PORTF, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTR, MASK_PORTR, IOPORT_DIR_OUTPUT);
-//	ioport_set_pin_sense_mode(NRF24L01_IRQ_LINE, IOPORT_SENSE_RISING);
 	PORTA.DIR = MASK_PORTA;
 	PORTB.DIR = MASK_PORTB;
 	PORTC.DIR = MASK_PORTC;
