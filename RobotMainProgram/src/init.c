@@ -42,7 +42,7 @@ void spi_init(void)
 void nrf_init (void)
 {
 	//NRF24L01_CE_LOW;       //disable transceiver modes
-	delay_ms(100); 
+	delay_ms(11); 
 	NRF24L01_Clear_Interrupts();
 	NRF24L01_Flush_TX();
 	NRF24L01_Flush_RX();
