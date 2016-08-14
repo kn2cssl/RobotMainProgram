@@ -7,7 +7,7 @@
 #define NRF24L01_H_
 #include <asf.h>
 #include <conf_board.h>
-#define	_CH_0 50			// Channel 0..125
+#define	_CH_0 50		// Channel 0..125
 #define	_CH_1 1
 #define	_CH_2 125
 #define	_CH_3 100

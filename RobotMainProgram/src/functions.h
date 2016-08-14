@@ -13,6 +13,7 @@
 #include "init.h"
 #include "nrf24l01.h"
 #include "controller.h"
+#include <math.h>
 
 void data_transmission ( void ) ;
 void fpga_connection ( void ) ;
@@ -30,15 +31,17 @@ void motors_current_check(void);
 
 #define high 1
 #define	low	 0
-
 #define KICK_TIME_LIMIT 300//! What should it be??
 #define CHIP_TIME_LIMIT 300//! What should it be??
-#define MAX_CHARGING_TIME 7000//! 7 seconds
+#define MAX_CHARGING_TIME 7000//! 7 secondes
 #define BOOST_BUCK_TIMER TCF0_CNT
 #define WIRLESS_TIMEOUT_TIMER RTC.CNT
 
-
 enum Data_Flow {new_wireless_data , new_jyro_data , new_controller_loop , packing_data , communication , unpacking_data , other_programs };
+	
+	extern float sp;
+	
+	
 
 typedef union High_Low{
 	uint8_t byte[2] ;
