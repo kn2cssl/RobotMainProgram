@@ -1,0 +1,2 @@
+# RobotMainProgram
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7663188087744aa9bcc878758ef9c11c)](https://www.codacy.com/app/m-amin-kashi/RobotMainProgram?utm_source=github.com&utm_medium=referral&utm_content=kn2cssl/RobotMainProgram&utm_campaign=badger)
