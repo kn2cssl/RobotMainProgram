@@ -69,23 +69,23 @@ void ocr_change(void) ;
 
 extern double Vx , Vy , Wr ;
 
-extern double x[7][1] , x_OB[7][1] , dx[7][1] ,xd[7][1] , du[4][1] , ud[4][1] , u[4][1] ;
+extern double x[11][1] , x_OB[11][1] , dx[11][1] ,xd[11][1] , du[4][1] , ud[4][1] , u[4][1] ;
 
 extern double camera_d[3][1];
 
-extern double Yd[7] ;
+extern double Yd[11] ;
 
-extern double A [7][7] ;
+extern double A [11][11] ;
 
-extern double B [7][4] ;
+extern double B [11][4] ;
 
-extern double C [7][7] ;
+extern double C [11][11] ;
 
 //  -inv(B'*B)*B'*A	= uFx					
-extern double uFx[4][7] ;
+extern double uFx[4][11] ;
 	
 //k:state feed back	
-extern double k_sf[4][7] ;
+extern double k_sf[4][11] ;
 
 extern double max_ocr ;
 
