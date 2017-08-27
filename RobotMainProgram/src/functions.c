@@ -103,17 +103,20 @@ inline void data_transmission (void)
 	show[2].full  = u[1][0]*1000;//free_wheel.motor_fault;
 	show[3].full  = u[2][0]*1000;//free_wheel.low_battery;
 	show[4].full  = u[3][0]*1000;//Robot.ct;
-	show[5].full  = Vx*1000;//Robot.nsp;
-	show[6].full  = Vy*1000;//Robot.nrp;
-	show[7].full  = Wr*1000;//Robot.ss;
-	show[8].full  = Robot.W0.full;//bbs.lko;
-	show[9].full  = Robot.W1.full;//Robot.wrc;
-	show[10].full = Robot.W2.full;//Robot.MCU_temperature.full ;
-	show[11].full = Robot.W3.full;//(int)(Robot.I0.full*1000) ;
-	show[12].full = (int)(Robot.I0.full*1000) ;
-	show[13].full = (int)(Robot.I1.full*1000) ;
-	show[14].full = (int)(Robot.I2.full*1000) ;
-	show[15].full = (int)(Robot.I3.full*1000) ;
+	
+	show[5].full  = x[0][0]*1000;//Robot.nsp;
+	show[6].full  = x[1][0]*1000;//Robot.nrp;
+	show[7].full  = x[2][0]*1000;//Robot.ss;
+	
+	show[8].full  = x[3][0];//bbs.lko;
+	show[9].full  = x[4][0] ;//Robot.wrc;
+	show[10].full = x[5][0] ;//Robot.MCU_temperature.full ;
+	show[11].full = x[6][0] ;//(int)(Robot.I0.full*1000) ;
+	
+	show[12].full = x[7][0] *1000;
+	show[13].full = x[8][0] *1000;
+	show[14].full = x[9][0] *1000;
+	show[15].full = x[10][0]*1000;
 
 	//! Debug data
 	spi_tx_buf[0]  = show[0].byte[high];//

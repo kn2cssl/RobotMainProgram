@@ -67,8 +67,6 @@ double sign ( double number ) ;
 
 void ocr_change(void) ;
 
-extern double Vx , Vy , Wr ;
-
 extern double x[11][1] , x_OB[11][1] , dx[11][1] ,xd[11][1] , du[4][1] , ud[4][1] , u[4][1] ;
 
 extern double camera_d[3][1];
