@@ -12,15 +12,6 @@
 
 void port_init(void)
 {
-// 	ioport_init();
-// 	ioport_set_port_dir(IOPORT_PORTA, MASK_PORTA, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTB, MASK_PORTB, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTC, MASK_PORTC, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTD, MASK_PORTD, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTE, MASK_PORTE, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTF, MASK_PORTF, IOPORT_DIR_OUTPUT);
-// 	ioport_set_port_dir(IOPORT_PORTR, MASK_PORTR, IOPORT_DIR_OUTPUT);
-//	ioport_set_pin_sense_mode(NRF24L01_IRQ_LINE, IOPORT_SENSE_RISING);
 	PORTA.DIR = MASK_PORTA;
 	PORTB.DIR = MASK_PORTB;
 	PORTC.DIR = MASK_PORTC;
@@ -34,8 +25,10 @@ void port_init(void)
 	ioport_set_value(NRF24L01_SCK_LINE , IOPORT_PIN_LEVEL_HIGH);
 	
 	ioport_configure_pin(NRF24L01_IRQ_LINE, PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc);
-	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc;
+	ioport_configure_pin(KICK_SENSOR,PORT_ISC_FALLING_gc);
+	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc | PORT_INT1LVL_HI_gc;
 	PORTD.INT0MASK = ioport_pin_to_mask(NRF24L01_IRQ_LINE);
+	PORTD.INT1MASK = ioport_pin_to_mask(KICK_SENSOR);
 }
 
 void spi_init(void)
@@ -179,6 +172,7 @@ void current_sensor_offset (void)
 	{
 		if ( (abs(Robot.W0.full)< 5) && (abs(Robot.W1.full)< 5) && (abs(Robot.W2.full)< 5) && (abs(Robot.W3.full)< 5) )
 		{
+			delay_ms(50);
 			current_offset_check = true;
 			for (int i=50; i ; i-- )
 			{
@@ -216,7 +210,7 @@ void tc_init(void)
    */
   tc_enable(&TCC0);
   tc_set_wgm(&TCC0, TC_WG_SS);
-  tc_write_clock_source(&TCC0, TC_CLKSEL_DIV8_gc);
+  tc_write_clock_source(&TCC0, TC_CLKSEL_DIV64_gc);
   
  
   /** chip : pin C4 

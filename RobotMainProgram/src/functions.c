@@ -96,7 +96,7 @@ inline void wireless_connection ( void )
 // run time : 2276 clk
 inline void data_transmission (void)
 {
-	HL show[11];
+	HL show[16];
 	show[0].full = cycle_time_us ;
 	
 	show[1].full = free_wheel.wireless_timeout;
@@ -107,10 +107,15 @@ inline void data_transmission (void)
  	show[5].full = Robot.nsp;
  	show[6].full = Robot.nrp;	
  	show[7].full = Robot.ss;
- 	show[8].full = Robot.I3.full;
+ 	show[8].full = bbs.lko;
 	show[9].full = Robot.wrc;
 	
 	show[10].full = Robot.MCU_temperature.full ;
+	
+	show[11].full = (int)(Robot.I0.full*1000) ;
+	show[12].full = (int)(Robot.I1.full*1000) ;
+	show[13].full = (int)(Robot.I2.full*1000) ;
+	show[14].full = (int)(Robot.I3.full*1000) ;
 
 	//! Debug data
 	spi_tx_buf[0]  = show[0].byte[high];//
@@ -136,14 +141,14 @@ inline void data_transmission (void)
 	spi_tx_buf[19] = show[9].byte[low]; 
 	spi_tx_buf[20] = show[10].byte[high];
 	spi_tx_buf[21] = show[10].byte[low]; 
-	spi_tx_buf[22] = Robot.I0.byte[high];
-	spi_tx_buf[23] = Robot.I0.byte[low];
-	spi_tx_buf[24] = Robot.I1.byte[high];
-	spi_tx_buf[25] = Robot.I1.byte[low];
-	spi_tx_buf[26] = Robot.I2.byte[high];
-	spi_tx_buf[27] = Robot.I2.byte[low];
-	spi_tx_buf[28] = Robot.I3.byte[high];
-	spi_tx_buf[29] = Robot.I3.byte[low];
+	spi_tx_buf[22] = show[11].byte[high];
+	spi_tx_buf[23] = show[11].byte[low];
+	spi_tx_buf[24] = show[12].byte[high];
+	spi_tx_buf[25] = show[12].byte[low]; 
+	spi_tx_buf[26] = show[13].byte[high];
+	spi_tx_buf[27] = show[13].byte[low]; 
+	spi_tx_buf[28] = show[14].byte[high];
+	spi_tx_buf[29] = show[14].byte[low]; 
 	spi_tx_buf[30] = Robot.batx1000.byte[high];
 	spi_tx_buf[31] = Robot.batx1000.byte[low]; 
 }
@@ -263,7 +268,18 @@ inline void data_unpacking (void)
 		Robot.W2.full = temp_data[2].full ;
 		Robot.W3.full = temp_data[3].full ;
 		Robot.SB.full = temp_data[4].full ;
-		number_of_received_packet ++ ;
+		if(MAKsumA == 0 && MAKsumB == 0)
+		{
+			if (!(temp_data[0].full == 0 && temp_data[1].full == 0 && temp_data[2].full == 0 && temp_data[3].full == 0 && temp_data[4].full == 0))
+			{
+				number_of_received_packet ++ ;
+			}
+		}
+		else
+		{
+			number_of_received_packet ++ ;
+		}
+		
 	}
 }
 
@@ -313,6 +329,7 @@ inline void read_all_adc(void)
 	adc_bandgap      = (adc_get_result(&ADCB, ADC_CH2) - adc_offset) / adc_gain ;
 	adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
 	adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 | ADC_CH2);
+	Robot.MCU_temperature.full = Robot.MCU_temperature.full + (adc_temperature /2 - Robot.MCU_temperature.full) * 0.2 ;
 }
 
 inline void battery_voltage_update(void)
@@ -350,7 +367,7 @@ inline void every_250ms(void)
 // TODO all periods and duty cycles should be chosen carefully (in boost_buck_manager)
 inline void boost_buck_manager(void)
 {
-	if (!bbs.failure)
+	if (!bbs.failure && !bbs.dont_charge)
 	{
 		//! calculating charging time
 		if (ioport_get_pin_level(CHARGE_LIMIT))
@@ -358,7 +375,7 @@ inline void boost_buck_manager(void)
 			if (bbs.charge_flag)
 			{
 				bbs.charge_counter++;
-				if (bbs.charge_counter>300)
+				if (bbs.charge_counter>100)
 				{
 					bbs.charge_counter = 0 ;
 					bbs.charge_flag = false ;
@@ -371,8 +388,8 @@ inline void boost_buck_manager(void)
 			
 		if (!bbs.chip_flag && !bbs.kick_flag && !ioport_get_pin_level(CHARGE_LIMIT))
 		{
-			CHARGE_PERIOD(19500);
-			CHARGE_DUTY_CYCLE(19490);
+			CHARGE_PERIOD(300);
+			CHARGE_DUTY_CYCLE(280);
 			CHARGE_START;
 			
 			// TODO it may create a delay before kick or chip
@@ -387,10 +404,20 @@ inline void boost_buck_manager(void)
 			CHARGE_STOP;
 				
 			//! Kick
-			if ((Robot.KICK || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
+			if (((Robot.KICK >0 && Robot.KICK <= 100) || ioport_get_pin_level(BIG_BUTTON)) && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
 			{
 				KICK_PERIOD(100);
-				KICK_DUTY_CYCLE(100);
+				
+				if (ioport_get_pin_level(BIG_BUTTON))
+				{
+					KICK_DUTY_CYCLE(100);
+					bbs.lko = button_kick;
+				}
+				else
+				{
+					KICK_DUTY_CYCLE(Robot.KICK);
+					bbs.lko = kick ;
+				}
 				KICK_START;
 				BOOST_BUCK_TIMER = 0;
 				bbs.kick_flag = true;
@@ -402,6 +429,10 @@ inline void boost_buck_manager(void)
 				BOOST_BUCK_TIMER = 0;
 				bbs.kick_flag = false;
 				bbs.charge_flag = true;
+				if (bbs.lko == button_kick)
+				{
+					bbs.dont_charge = true;
+				}
 			}
 				
 			//! Chip
@@ -460,19 +491,19 @@ inline void motors_current_check(void)
 		// 	i_model_M2 = (float) (u[2][0] - Robot.W2.full*N/ kn) / res ;
 		// 	i_model_M3 = (float) (u[3][0] - Robot.W3.full*N/ kn) / res ;
 
-		if ( fabs(Robot.I0.full)>0.7) Robot.W0_warning += fabs(Robot.I0.full) * 5;
+		if ( fabs(Robot.I0.full)>3.5) Robot.W0_warning += fabs(Robot.I0.full) * 5;
 		else if(Robot.W0_warning) Robot.W0_warning --;
 		
-		if ( fabs(Robot.I1.full)>0.7) Robot.W1_warning += fabs(Robot.I1.full) * 5;
+		if ( fabs(Robot.I1.full)>3.5) Robot.W1_warning += fabs(Robot.I1.full) * 5;
 		else if(Robot.W1_warning) Robot.W1_warning --;
 		
-		if ( fabs(Robot.I2.full)>0.7) Robot.W2_warning += fabs(Robot.I2.full) * 5;
+		if ( fabs(Robot.I2.full)>3.5) Robot.W2_warning += fabs(Robot.I2.full) * 5;
 		else if(Robot.W2_warning) Robot.W2_warning --;
 		
-		if ( fabs(Robot.I3.full)>0.7) Robot.W3_warning += fabs(Robot.I3.full) * 5;
+		if ( fabs(Robot.I3.full)>3.5) Robot.W3_warning += fabs(Robot.I3.full) * 5;
 		else if(Robot.W3_warning) Robot.W3_warning --;
 		
-		if(Robot.W0_warning > 60000 || Robot.W1_warning > 60000 || Robot.W2_warning > 60000 || Robot.W3_warning > 60000)
+		if(Robot.W0_warning > 20000 || Robot.W1_warning > 20000 || Robot.W2_warning > 20000 || Robot.W3_warning > 20000)
 		{
 			free_wheel.motor_fault = true;
 		}

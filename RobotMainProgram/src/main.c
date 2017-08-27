@@ -12,7 +12,6 @@
 #include "functions.h"
 
 //TODO All functions should be specified in starting and ending time
-//TODO doxygen
 int main (void)
 {
 	sysclk_init();   //! Initializing system clock
@@ -20,7 +19,7 @@ int main (void)
 	pmic_init();     //! Enabling all interrupt levels
  	port_init();     //! Initializing ports
 	robot_id_set();  //! Setting robot id
- 	spi_init();      //! Initializing spi
+ 	spi_init();      //! Initializing SPI
  	nrf_init();      //! Initializing NRF24l01+
 	adc_init();      //! Initializing ADC module
 	tc_init();    
@@ -32,15 +31,16 @@ int main (void)
 	// complete run time : 23102 clk
 	while(1)
 	{
+		ioport_set_pin_level(LED_GREEN,ioport_get_pin_level(KICK_SENSOR));
 
-		if (WIRLESS_TIMEOUT_TIMER >= 10)
+		if (WIRLESS_TIMEOUT_TIMER >= 40)
 		{
 			cli();
 			nrf_init () ;
 			sei();
 			free_wheel.wireless_timeout = true ;
 			WIRLESS_TIMEOUT_TIMER = 0;
-			data = new_controller_loop ;//for sending free wheel order to fpga
+			data = new_controller_loop ;//for sending free wheel order to FPGA
 			Robot.wrc ++;
 		}
 
@@ -126,5 +126,17 @@ int main (void)
 ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 {
 	wireless_connection();
-	data = new_controller_loop;//communication;new_controller_loop ;	
+	data = new_controller_loop;
+}
+	
+ISR(PORTD_INT1_vect){
+	if (Robot.KICK>100 && Robot.KICK<=200 && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
+	{
+		KICK_PERIOD(100);
+		KICK_DUTY_CYCLE(Robot.KICK - 100);
+		bbs.lko = sensor_kick ;
+		KICK_START;
+		BOOST_BUCK_TIMER = 0;
+		bbs.kick_flag = true;
+	}
 }
