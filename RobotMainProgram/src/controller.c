@@ -117,10 +117,10 @@ void setpoint_generator ( void )
 	xd[0][0] = Vx ;
 	xd[1][0] = Vy ;
 	xd[2][0] = Wr ;
-	xd[3][0] = (-Vx*sina1+Vy*cosa1+Wr*d)*b ;
-	xd[4][0] = (-Vx*sina2+Vy*cosa2+Wr*d)*b ;
-	xd[5][0] = (-Vx*sina3+Vy*cosa3+Wr*d)*b ;
-	xd[6][0] = (-Vx*sina4+Vy*cosa4+Wr*d)*b ;
+	xd[3][0] = (Vx*sina1-Vy*cosa1-Wr*d)*b ;
+	xd[4][0] = (Vx*sina2-Vy*cosa2-Wr*d)*b ;
+	xd[5][0] = (Vx*sina3-Vy*cosa3-Wr*d)*b ;
+	xd[6][0] = (Vx*sina4-Vy*cosa4-Wr*d)*b ;
 	
 	xd[7][0] = 0 ;
 	xd[8][0] = 0 ;
