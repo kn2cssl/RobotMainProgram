@@ -266,11 +266,11 @@ inline void data_unpacking (void)
 	//saving checked data
 	if( ( MAKsumA == temp_data[5].full ) && ( MAKsumB == temp_data[6].full))
 	{
-		Robot.W0.full = temp_data[0].full ;
-		Robot.W1.full = temp_data[1].full ;
-		Robot.W2.full = temp_data[2].full ;
-		Robot.W3.full = temp_data[3].full ;
-		Robot.SB.full = temp_data[4].full ;
+		Robot.W0.full = -temp_data[0].full ;
+		Robot.W1.full = -temp_data[1].full ;
+		Robot.W2.full = -temp_data[2].full ;
+		Robot.W3.full = -temp_data[3].full ;
+		Robot.SB.full = -temp_data[4].full ;
 		if(MAKsumA == 0 && MAKsumB == 0)
 		{
 			if (!(temp_data[0].full == 0 && temp_data[1].full == 0 && temp_data[2].full == 0 && temp_data[3].full == 0 && temp_data[4].full == 0))
