@@ -135,7 +135,7 @@ void adc_calibration (void)
 	ioport_set_pin_level(MOTOR1_CURRENT_ADC,low);
 	ioport_set_pin_level(MOTOR2_CURRENT_ADC,low);
 	ioport_set_pin_level(MOTOR3_CURRENT_ADC,low);
-	
+	delay_ms(30);
 	for (int i=10; i ; i-- )
 	{
 		EVSYS.DATA = 0x01;

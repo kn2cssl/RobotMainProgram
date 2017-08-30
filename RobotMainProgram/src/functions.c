@@ -299,22 +299,25 @@ inline void free_wheel_function ( void )
 		Robot.W2_sp.byte[low ]		= 0;
 		Robot.W3_sp.byte[high]		= 0;
 		Robot.W3_sp.byte[low ]		= 0;
+		
+		run_time_us = 0;
 	}
 }
 
 //starting counter
 inline void Timer_on(void)
 {
-	// 	TCE0_CNT = 0 ;
-	// 	TCE1_CNT = 0 ;
+		TCE0_CNT = 0 ;
+		TCE1_CNT = 0 ;
 }
 
 //stopping counter and showing time through USART
 //running time : about 26400 clk
 inline void Timer_show (void)
 {
-	cycle_time_us = TCE1_CNT;//TCE1_CNT * 1e+3 + TCE0_CNT * 2 ;
-	cycle_time_s = 0.0035;//TCE1_CNT/1000.0 + TCE0_CNT/500000.0 ;
+	cycle_time_us = TCE1_CNT * 1e+3 + TCE0_CNT * 2 ;
+	cycle_time_s = TCE1_CNT/1000.0 + TCE0_CNT/500000.0 ;
+	run_time_us += TCE1_CNT;
 }
 
 inline void read_all_adc(void)
@@ -482,11 +485,35 @@ inline void motors_current_check(void)
 		//currents
 		// voltage dividing : 560k & 470k => (560 + 470) / 560 = 103 / 56
 		// Current sensor : 185 mV/A output sensitivity
-		// 103 / 56 / 0.185 = 9.942084942
-		Robot.I0.full = ((adc_m0 - adc_m0_offset)* 9.942084942 - Robot.I0.full)*0.1 + Robot.I0.full;
-		Robot.I1.full = ((adc_m1 - adc_m1_offset)* 9.942084942 - Robot.I1.full)*0.1 + Robot.I1.full;
-		Robot.I2.full = ((adc_m2 - adc_m2_offset)* 9.942084942 - Robot.I2.full)*0.1 + Robot.I2.full;
-		Robot.I3.full = ((adc_m3 - adc_m3_offset)* 9.942084942 - Robot.I3.full)*0.1 + Robot.I3.full;
+		// 103 / 56 / 0.185 = 9.942084942 -> 10.0
+		if (u[0][0]>0){
+			Robot.I0.full = ((adc_m0 - adc_m0_offset)* 10.0 - Robot.I0.full)*0.1 + Robot.I0.full;
+		}
+		else{
+			Robot.I0.full = (-(adc_m0 - adc_m0_offset)* 10.0 - Robot.I0.full)*0.1 + Robot.I0.full;
+		}
+		
+		if (u[1][0]>0){
+			Robot.I1.full = ((adc_m1 - adc_m1_offset)* 10.0 - Robot.I1.full)*0.1 + Robot.I1.full;
+		}
+		else{
+			Robot.I1.full = (-(adc_m1 - adc_m1_offset)* 10.0 - Robot.I1.full)*0.1 + Robot.I1.full;
+		}
+		
+		if (u[2][0]>0){
+			Robot.I2.full = ((adc_m2 - adc_m2_offset)* 10.0 - Robot.I2.full)*0.1 + Robot.I2.full;
+		}
+		else{
+			Robot.I2.full = ((adc_m2 - adc_m2_offset)* 10.0 - Robot.I2.full)*0.1 + Robot.I2.full;
+		}
+		
+		if (u[3][0]>0){
+			Robot.I3.full = ((adc_m3 - adc_m3_offset)* 10.0 - Robot.I3.full)*0.1 + Robot.I3.full;
+		}
+		else{
+			Robot.I3.full = ((adc_m3 - adc_m3_offset)* 10.0 - Robot.I3.full)*0.1 + Robot.I3.full;
+		}
+		
 		// TODO amazing and strange result in comparison with current-sensor's result
 		//  i_m=(V-V_emf)/R=(V-?_m/k_n )/R  : another way of calculating current
 		// 	i_model_M0 = (float) (u[0][0] - Robot.W0.full*N/ kn) / res ;

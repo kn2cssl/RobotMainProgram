@@ -87,6 +87,6 @@ extern double k_sf[4][11] ;
 
 extern double max_ocr ;
 
-extern float cycle_time_s, cycle_time_us;
+extern float cycle_time_s, cycle_time_us, run_time_us;
 
 #endif /* CONTROLLER_H_ */
