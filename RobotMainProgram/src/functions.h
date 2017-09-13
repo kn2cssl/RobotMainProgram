@@ -61,6 +61,7 @@ struct Robot_Data
 	HL Vy ;
 	HL Wr ;
 	HL alpha ;
+	HL alphaLast;
 	uint8_t KICK;
 	uint8_t CHIP;
 	uint8_t SPIN;

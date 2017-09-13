@@ -51,7 +51,7 @@ int main (void)
 			Timer_show();
 			Timer_on();
 			
-			//observer();
+			observer();
 			
 			state_generator();
 			
