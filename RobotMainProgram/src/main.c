@@ -10,6 +10,9 @@
 #include "nrf24l01.h"
 #include "controller.h"
 #include "functions.h"
+#include <stdio.h>
+
+char dastan =0;
 
 //TODO All functions should be specified in starting and ending time
 int main (void)
@@ -26,117 +29,136 @@ int main (void)
 	rtc_init();
 	// TODO Watch dog !!
  
+ 	static usart_rs232_options_t USART_SERIAL_OPTIONS = {
+	 	.baudrate = 115200,
+	 	.charlength = USART_CHSIZE_8BIT_gc,
+	 	.paritytype = USART_PMODE_DISABLED_gc,
+	 	.stopbits = false
+ 	};
+ 	usart_init_rs232(&USARTD0, &USART_SERIAL_OPTIONS);
+	 	 
 	sei();
-	
-	// complete run time : 23102 clk
+
 	while(1)
 	{
-		ioport_set_pin_level(LED_GREEN,ioport_get_pin_level(KICK_SENSOR));
-
-		if (WIRLESS_TIMEOUT_TIMER >= 40)
-		{
-			cli();
-			nrf_init () ;
-			sei();
-			free_wheel.wireless_timeout = true ;
-			WIRLESS_TIMEOUT_TIMER = 0;
-			data = new_controller_loop ;//for sending free wheel order to FPGA
-			Robot.wrc ++;
-		}
-
-		// TODO Check whether it is necessary to turn off interrupts in main loop of program or not
-		// run time : about 19115 clk
-		if (data == new_controller_loop)
-		{
-			Timer_show();
-			Timer_on();
-			
-			observer();
-			
-			state_generator();
-			
-			setpoint_generator() ;
-			
-			state_feed_back() ;
-
-			ocr_change();
-			float nominal_v[4] ;
-			float out_l[4];
-			nominal_v[0]= fabs(u[0][0] / Robot.bat_v.full);
-			nominal_v[1]= fabs(u[1][0] / Robot.bat_v.full);
-			nominal_v[2]= fabs(u[2][0] / Robot.bat_v.full);
-			nominal_v[3]= fabs(u[3][0] / Robot.bat_v.full);
-			out_l[0] = (454.2 * nominal_v[0] + 326.3) / (pow(nominal_v[0],2) - 8364.0 * nominal_v[0] + 9120.0) * max_ocr * sign(u[0][0]);
-			out_l[1] = (454.2 * nominal_v[1] + 326.3) / (pow(nominal_v[1],2) - 8364.0 * nominal_v[1] + 9120.0) * max_ocr * sign(u[1][0]);
-			out_l[2] = (454.2 * nominal_v[2] + 326.3) / (pow(nominal_v[2],2) - 8364.0 * nominal_v[2] + 9120.0) * max_ocr * sign(u[2][0]);
-			out_l[3] = (454.2 * nominal_v[3] + 326.3) / (pow(nominal_v[3],2) - 8364.0 * nominal_v[3] + 9120.0) * max_ocr * sign(u[3][0]);
-			
-			Robot.W0_sp.full = out_l[0];//u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = out_l[1];//u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = out_l[2];//u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = out_l[3];//u[3][0] /Robot.bat_v.full * max_ocr;
-			data = packing_data ;
-			
-		}
+				ioport_set_pin_level(LED_GREEN,ioport_get_pin_level(KICK_SENSOR));
 		
-		//run time : 536 clk
-		if (data == packing_data)
-		{
-			free_wheel_function () ;
-			data_packing () ;
-			packet_counter = 0 ;
-			summer=0;
-			data = communication ;
-		}
+				if (WIRLESS_TIMEOUT_TIMER >= 40)
+				{
+					cli();
+					//nrf_init () ;
+					sei();
+					free_wheel.wireless_timeout = true ;
+					WIRLESS_TIMEOUT_TIMER = 0;
+					data = new_controller_loop ;//for sending free wheel order to FPGA
+					Robot.wrc ++;
+				}
 		
-		//run time : 84 clk
-		if (data == communication)
-		{
-			fpga_connection () ;
-			packet_counter++;
-			summer += packet_counter;
-		}
+				// TODO Check whether it is necessary to turn off interrupts in main loop of program or not
+				// run time : about 19115 clk
+				if (data == new_controller_loop)
+				{
+					Timer_show();
+					Timer_on();
+					
+					observer();
+					
+					state_generator();
+					
+					setpoint_generator() ;
+					
+					state_feed_back() ;
 		
-		// run time : 425 clk
-		if (data == unpacking_data)
-		{
-			data_unpacking () ;
-			data = other_programs ;
-		}
-		
-		// run time : 2 clk
-		if (data == other_programs)
-		{
-			ioport_set_value(LED_RED,   low);
-			ioport_set_value(LED_WHITE, low);
-			
-			read_all_adc();
-			battery_voltage_update();
-			boost_buck_manager();
-			motors_current_check();
-			data_transmission();
-			current_sensor_offset();
-			
-			data = new_controller_loop;
-		}
+					ocr_change();
+					float nominal_v[4] ;
+					float out_l[4];
+					nominal_v[0]= fabs(u[0][0] / Robot.bat_v.full);
+					nominal_v[1]= fabs(u[1][0] / Robot.bat_v.full);
+					nominal_v[2]= fabs(u[2][0] / Robot.bat_v.full);
+					nominal_v[3]= fabs(u[3][0] / Robot.bat_v.full);
+					out_l[0] = (454.2 * nominal_v[0] + 326.3) / (pow(nominal_v[0],2) - 8364.0 * nominal_v[0] + 9120.0) * max_ocr * sign(u[0][0]);
+					out_l[1] = (454.2 * nominal_v[1] + 326.3) / (pow(nominal_v[1],2) - 8364.0 * nominal_v[1] + 9120.0) * max_ocr * sign(u[1][0]);
+					out_l[2] = (454.2 * nominal_v[2] + 326.3) / (pow(nominal_v[2],2) - 8364.0 * nominal_v[2] + 9120.0) * max_ocr * sign(u[2][0]);
+					out_l[3] = (454.2 * nominal_v[3] + 326.3) / (pow(nominal_v[3],2) - 8364.0 * nominal_v[3] + 9120.0) * max_ocr * sign(u[3][0]);
+					
+					Robot.W0_sp.full = out_l[0];//u[0][0] /Robot.bat_v.full * max_ocr;
+					Robot.W1_sp.full = out_l[1];//u[1][0] /Robot.bat_v.full * max_ocr;
+					Robot.W2_sp.full = out_l[2];//u[2][0] /Robot.bat_v.full * max_ocr;
+					Robot.W3_sp.full = out_l[3];//u[3][0] /Robot.bat_v.full * max_ocr;
+					data = packing_data ;
+					
+				}
+				
+				//run time : 536 clk
+				if (data == packing_data)
+				{
+					free_wheel_function () ;
+					data_packing () ;
+					packet_counter = 0 ;
+					summer=0;
+					data = communication ;
+				}
+				
+				//run time : 84 clk
+				if (data == communication)
+				{
+					fpga_connection () ;
+					packet_counter++;
+					summer += packet_counter;
+				}
+				
+				// run time : 425 clk
+				if (data == unpacking_data)
+				{
+					data_unpacking () ;
+					data = other_programs ;
+				}
+				
+				// run time : 2 clk
+				if (data == other_programs)
+				{
+					//ioport_set_value(LED_RED,   low);
+					//ioport_set_value(LED_WHITE, low);
+					
+					read_all_adc();
+					battery_voltage_update();
+					//boost_buck_manager();
+					motors_current_check();
+					data_transmission();
+					current_sensor_offset();
+					
+					data = new_controller_loop;
+				}
 	}
 }
 
 
 ISR(PORTD_INT0_vect)//PRX   IRQ Interrupt Pin
 {
+	dastan++;
+	ioport_toggle_pin_level(LED_GREEN);
 	wireless_connection();
+	if(dastan%100==0)
+	{
+		char a[40];
+		char i=sprintf(a,"RID:%d		VX_SP=%d		VX=%d\r\n",Robot.RID,Robot.Vx_sp,Robot.Vx);
+		for(char kk=0;kk<i;kk++)usart_putchar(&USARTD0,a[kk]);
+	}
 	data = new_controller_loop;
 }
 	
 ISR(PORTD_INT1_vect){
-	if (Robot.KICK>100 && Robot.KICK<=200 && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
-	{
-		KICK_PERIOD(100);
-		KICK_DUTY_CYCLE(Robot.KICK - 100);
-		bbs.lko = sensor_kick ;
-		KICK_START;
-		BOOST_BUCK_TIMER = 0;
-		bbs.kick_flag = true;
-	}
+
+//Reza Changed
+
+// 	if (Robot.KICK>100 && Robot.KICK<=200 && !bbs.kick_flag && !bbs.chip_flag && !bbs.charge_flag)
+// 	{
+// 		KICK_PERIOD(100);
+// 		KICK_DUTY_CYCLE(Robot.KICK - 100);
+// 		bbs.lko = sensor_kick ;
+// 		KICK_START;
+// 		BOOST_BUCK_TIMER = 0;
+// 		bbs.kick_flag = true;
+// 	}
+
 }

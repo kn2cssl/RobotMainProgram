@@ -1,9 +1,9 @@
 /**
- * \file
+ * \file *********************************************************************
  *
- * \brief RTC configuration
+ * \brief USART Serial configuration
  *
- * Copyright (c) 2010-2015 Atmel Corporation. All rights reserved.
+ * Copyright (c) 2014-2015 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
@@ -43,11 +43,8 @@
 /*
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
-#ifndef CONF_RTC_H
-#define CONF_RTC_H
 
-#define CONFIG_RTC_PRESCALER          RTC_PRESCALER_DIV1024_gc
-#define CONFIG_RTC_COMPARE_INT_LEVEL  RTC_COMPINTLVL_LO_gc
-#define CONFIG_RTC_OVERFLOW_INT_LEVEL RTC_OVFINTLVL_LO_gc
+#ifndef CONF_USART_SERIAL_H_INCLUDED
+#define CONF_USART_SERIAL_H_INCLUDED
 
-#endif /* CONF_RTC_H */
+#endif /* CONF_USART_SERIAL_H_INCLUDED */

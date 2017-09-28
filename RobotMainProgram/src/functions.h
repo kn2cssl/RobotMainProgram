@@ -13,6 +13,7 @@
 #include "init.h"
 #include "nrf24l01.h"
 #include "controller.h"
+#include <stdio.h>
 
 void data_transmission ( void ) ;
 void fpga_connection ( void ) ;
@@ -25,7 +26,7 @@ void Timer_show (void) ;
 void read_all_adc(void);
 void battery_voltage_update(void);
 void every_250ms(void);
-void boost_buck_manager(void);
+//void boost_buck_manager(void);
 void motors_current_check(void);
 
 #define high 1

@@ -96,6 +96,6 @@
 //#define CONFIG_OSC_AUTOCAL_RC32MHZ_REF_OSC  OSC_ID_USBSOF
 
 /* Use to enable and select RTC clock source */
-#define CONFIG_RTC_SOURCE           SYSCLK_RTCSRC_RCOSC
+//#define CONFIG_RTC_SOURCE           SYSCLK_RTCSRC_ULP
 
 #endif /* CONF_CLOCK_H_INCLUDED */

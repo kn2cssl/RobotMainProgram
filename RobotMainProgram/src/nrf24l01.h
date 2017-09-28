@@ -32,7 +32,9 @@
 // # define NRF24L01_set_clk1_output()  (NRF24L01_PORTDIRSET = NRF24L01_CLK1_LINE)
 // # define NRF24L01_set_data1_output() (NRF24L01_PORTDIRSET = NRF24L01_DATA1_LINE)
 // # define NRF24L01_set_data1_input()  (NRF24L01_PORTDIRCLR = NRF24L01_DATA1_LINE)
- # define NRF24L01_set_IRQ_input()    (NRF24L01_PORTDIRCLR = NRF24L01_IRQ_LINE)
+
+//Reza changed
+// # define NRF24L01_set_IRQ_input()    (NRF24L01_PORTDIRCLR = NRF24L01_IRQ_LINE)
 // # define NRF24L01_set_clk2_output()  (NRF24L01_PORTDIRSET = NRF24L01_CLK2_LINE)
 // # define NRF24L01_set_data2_output() (NRF24L01_PORTDIRSET = NRF24L01_DATA2_LINE)
 // # define NRF24L01_set_data2_input()  (NRF24L01_PORTDIRCLR = NRF24L01_DATA2_LINE)
@@ -60,10 +62,10 @@
 /* Port 0, bit 17 is set to GPIO output (NRF24L01 CE) */
 //#define NRF24L01_CE_OUT		NRF24L01_set_ce_output()
 
-#define NRF24L01_CE_HIGH	    NRF24L01_PORT.OUTSET = NRF24L01_CE_LINE
-#define NRF24L01_CE_LOW		NRF24L01_PORT.OUTCLR = NRF24L01_CE_LINE
-#define NRF24L01_CS_HIGH	    NRF24L01_PORT.OUTSET = NRF24L01_CS_LINE
-#define NRF24L01_CS_LOW		NRF24L01_PORT.OUTCLR = NRF24L01_CS_LINE
+#define NRF24L01_CE_HIGH	    ioport_set_pin_level(NRF24L01_CE_LINE,1)
+#define NRF24L01_CE_LOW			ioport_set_pin_level(NRF24L01_CE_LINE,0)
+#define NRF24L01_CS_HIGH	    ioport_set_pin_level(NRF24L01_CS_LINE,1)
+#define NRF24L01_CS_LOW			ioport_set_pin_level(NRF24L01_CS_LINE,0)
 
 char SPI_L(char TX_Data);
 

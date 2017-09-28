@@ -26,9 +26,11 @@ void port_init(void)
 	
 	ioport_configure_pin(NRF24L01_IRQ_LINE, PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc);
 	ioport_configure_pin(KICK_SENSOR,PORT_ISC_FALLING_gc);
-	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc | PORT_INT1LVL_HI_gc;
+	PORTD.INTCTRL  = PORT_INT0LVL_HI_gc;
 	PORTD.INT0MASK = ioport_pin_to_mask(NRF24L01_IRQ_LINE);
-	PORTD.INT1MASK = ioport_pin_to_mask(KICK_SENSOR);
+	
+	PORTA.INTCTRL  = PORT_INT0LVL_HI_gc;
+	PORTA.INT0MASK = ioport_pin_to_mask(KICK_SENSOR);
 }
 
 void spi_init(void)
@@ -83,19 +85,20 @@ void adc_init(void)
 	adc_enable_internal_input(&adc_conf, ADC_INT_TEMPSENSE);
 	adc_set_clock_rate(&adc_conf, 200000UL);
 	adc_write_configuration(&ADCA, &adc_conf);
-	
+
+	//! M0
+	adcch_set_input(&adcch_conf, ADCCH_POS_PIN2, ADCCH_NEG_NONE, 1);
+	adcch_write_configuration(&ADCA, ADC_CH0, &adcch_conf);
+	//! M1
+	adcch_set_input(&adcch_conf, ADCCH_POS_PIN6, ADCCH_NEG_NONE, 1);
+	adcch_write_configuration(&ADCA, ADC_CH1, &adcch_conf);
 	//! MPU temperature
 	adcch_set_input(&adcch_conf, ADCCH_POS_TEMPSENSE, ADCCH_NEG_NONE, 1);
-	adcch_write_configuration(&ADCA, ADC_CH0, &adcch_conf);
-	//! Battery voltage
-	adcch_set_input(&adcch_conf, ADCCH_POS_PIN3, ADCCH_NEG_NONE, 1);
-	adcch_write_configuration(&ADCA, ADC_CH1, &adcch_conf);
-	//! M2
-	adcch_set_input(&adcch_conf, ADCCH_POS_PIN5, ADCCH_NEG_NONE, 1);
 	adcch_write_configuration(&ADCA, ADC_CH2, &adcch_conf);
-	//! M3
-	adcch_set_input(&adcch_conf, ADCCH_POS_PIN6, ADCCH_NEG_NONE, 1);
-	adcch_write_configuration(&ADCA, ADC_CH3, &adcch_conf);
+// 	//! Battery voltage
+// 	adcch_set_input(&adcch_conf, ADCCH_POS_PIN3, ADCCH_NEG_NONE, 1);
+// 	adcch_write_configuration(&ADCA, ADC_CH1, &adcch_conf);
+
 	
 	adc_enable(&ADCA);
 	
@@ -108,15 +111,18 @@ void adc_init(void)
 	adc_set_clock_rate(&adc_conf, 200000UL);
 	adc_write_configuration(&ADCB, &adc_conf);
 	
-	//! M0
-	adcch_set_input(&adcch_conf, ADCCH_POS_PIN2, ADCCH_NEG_NONE, 1);
+	//! M2
+	adcch_set_input(&adcch_conf, ADCCH_POS_PIN7, ADCCH_NEG_NONE, 1);
 	adcch_write_configuration(&ADCB, ADC_CH0, &adcch_conf);
-	//! M1
-	adcch_set_input(&adcch_conf, ADCCH_POS_PIN1, ADCCH_NEG_NONE, 1);
+	//! M3
+	adcch_set_input(&adcch_conf, ADCCH_POS_PIN4, ADCCH_NEG_NONE, 1);
 	adcch_write_configuration(&ADCB, ADC_CH1, &adcch_conf);
 	//! BANDGAP
 	adcch_set_input(&adcch_conf, ADCCH_POS_BANDGAP, ADCCH_NEG_NONE, 1);
 	adcch_write_configuration(&ADCB, ADC_CH2, &adcch_conf);
+	//! Battery voltage
+	adcch_set_input(&adcch_conf, ADCCH_POS_PIN5, ADCCH_NEG_NONE, 1);
+	adcch_write_configuration(&ADCB, ADC_CH3, &adcch_conf);
 	
 	adc_enable(&ADCB);
 	
@@ -141,14 +147,14 @@ void adc_calibration (void)
 		EVSYS.DATA = 0x01;
 		EVSYS.STROBE = 0x01;
 		delay_ms(1); //! Time needed for good result (tested)
-		adc_m2_offset           += adc_get_result(&ADCA, ADC_CH2);
-		adc_m3_offset           += adc_get_result(&ADCA, ADC_CH3);
-		adc_m0_offset           += adc_get_result(&ADCB, ADC_CH0);
-		adc_m1_offset           += adc_get_result(&ADCB, ADC_CH1);
+		adc_m0_offset           += adc_get_result(&ADCA, ADC_CH0);
+		adc_m1_offset           += adc_get_result(&ADCA, ADC_CH1);
+		adc_m2_offset           += adc_get_result(&ADCB, ADC_CH0);
+		adc_m3_offset           += adc_get_result(&ADCB, ADC_CH1);
 		adc_bandgap             += adc_get_result(&ADCB, ADC_CH2);
 		             
 		adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
-		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );	
+		adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);	
 	}
 	
 	adc_m2_offset       = adc_m2_offset	 / 10 ;
@@ -179,13 +185,13 @@ void current_sensor_offset (void)
 				EVSYS.DATA = 0x01;
 				EVSYS.STROBE = 0x01;
 				delay_ms(1); //! Time needed for good result (tested)
-				adc_m2_offset           += adc_get_result(&ADCA, ADC_CH2);
-				adc_m3_offset           += adc_get_result(&ADCA, ADC_CH3);
-				adc_m0_offset           += adc_get_result(&ADCB, ADC_CH0);
-				adc_m1_offset           += adc_get_result(&ADCB, ADC_CH1);
+				adc_m0_offset           += adc_get_result(&ADCA, ADC_CH0);
+				adc_m1_offset           += adc_get_result(&ADCA, ADC_CH1);
+				adc_m2_offset           += adc_get_result(&ADCB, ADC_CH0);
+				adc_m3_offset           += adc_get_result(&ADCB, ADC_CH1);
 		
 				adc_clear_interrupt_flag(&ADCA, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
-				adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 );
+				adc_clear_interrupt_flag(&ADCB, ADC_CH0 | ADC_CH1 | ADC_CH2 | ADC_CH3);
 			}
 	
 			adc_m0_offset       = (adc_m0_offset	 / 50 - adc_offset) / adc_gain;
@@ -216,9 +222,9 @@ void tc_init(void)
   /** chip : pin C4 
 	* (other TC settings should be done according to the type of use )
 	*/
-  tc_enable(&TCC1);
-  tc_set_wgm(&TCC1, TC_WG_SS);
-  tc_write_clock_source(&TCC1, TC_CLKSEL_DIV64_gc);
+//   tc_enable(&TCC1);
+//   tc_set_wgm(&TCC1, TC_WG_SS);
+//   tc_write_clock_source(&TCC1, TC_CLKSEL_DIV64_gc);
   
   //! Clock : 250ms
   tc_enable(&TCD0);

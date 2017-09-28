@@ -46,6 +46,7 @@
 #ifndef XMEGA_SYSCLK_H_INCLUDED
 #define XMEGA_SYSCLK_H_INCLUDED
 
+#include <board.h>
 #include <compiler.h>
 #include <parts.h>
 #include <ccp.h>

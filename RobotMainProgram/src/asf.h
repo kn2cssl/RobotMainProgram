@@ -68,6 +68,9 @@
 // From module: Delay routines
 #include <delay.h>
 
+// From module: Generic board support
+#include <board.h>
+
 // From module: IOPORT - General purpose I/O service
 #include <ioport.h>
 
@@ -112,6 +115,12 @@
 // From module: TWI - Two-wire Master and Slave Interface
 #include <twim.h>
 #include <twis.h>
+
+// From module: USART - Serial interface - XMEGA implementation
+#include <serial.h>
+
+// From module: USART - Universal Synchronous/Asynchronous Receiver/Transmitter
+#include <usart.h>
 
 // From module: WDT - Watchdog Timer
 #include <wdt.h>
