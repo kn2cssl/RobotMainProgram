@@ -91,4 +91,16 @@ extern double max_ocr ;
 
 extern float cycle_time_s, cycle_time_us;
 
+
+//Reza_C
+void Reza_state_generator ( void );
+void Reza_observer ( void );
+void Reza_setpoint_generator ( void );
+void Reza_state_feed_back ( void );
+extern double state[7] , sensor[7] , u_saturated[4] , u_total[4];
+extern double A_OBS[7][7] , B_OBS[7][4] , C_OBS[7][7] , G_OBS[7][7];
+extern double Vx_sp , Vy_sp , W_sp ;
+extern double K_CNT_P[4][7] , K_CNT_I[4][3] , u_i_buffer[4] ;
+extern double K_IAW ;
+
 #endif /* CONTROLLER_H_ */

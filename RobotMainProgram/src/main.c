@@ -51,31 +51,34 @@ int main (void)
 			Timer_show();
 			Timer_on();
 			
-			observer();
+			Reza_state_generator();
+			Reza_observer();
 			
-			state_generator();
-			
-			setpoint_generator() ;
-			
-			state_feed_back() ;
-
-			ocr_change();
-			float nominal_v[4] ;
-			float out_l[4];
-			nominal_v[0]= fabs(u[0][0] / Robot.bat_v.full);
-			nominal_v[1]= fabs(u[1][0] / Robot.bat_v.full);
-			nominal_v[2]= fabs(u[2][0] / Robot.bat_v.full);
-			nominal_v[3]= fabs(u[3][0] / Robot.bat_v.full);
-			out_l[0] = (454.2 * nominal_v[0] + 326.3) / (pow(nominal_v[0],2) - 8364.0 * nominal_v[0] + 9120.0) * max_ocr * sign(u[0][0]);
-			out_l[1] = (454.2 * nominal_v[1] + 326.3) / (pow(nominal_v[1],2) - 8364.0 * nominal_v[1] + 9120.0) * max_ocr * sign(u[1][0]);
-			out_l[2] = (454.2 * nominal_v[2] + 326.3) / (pow(nominal_v[2],2) - 8364.0 * nominal_v[2] + 9120.0) * max_ocr * sign(u[2][0]);
-			out_l[3] = (454.2 * nominal_v[3] + 326.3) / (pow(nominal_v[3],2) - 8364.0 * nominal_v[3] + 9120.0) * max_ocr * sign(u[3][0]);
-			
-			Robot.W0_sp.full = out_l[0];//u[0][0] /Robot.bat_v.full * max_ocr;
-			Robot.W1_sp.full = out_l[1];//u[1][0] /Robot.bat_v.full * max_ocr;
-			Robot.W2_sp.full = out_l[2];//u[2][0] /Robot.bat_v.full * max_ocr;
-			Robot.W3_sp.full = out_l[3];//u[3][0] /Robot.bat_v.full * max_ocr;
-			data = packing_data ;
+// 			observer();
+// 			
+// 			state_generator();
+// 			
+// 			setpoint_generator() ;
+// 			
+// 			state_feed_back() ;
+// 
+// 			ocr_change();
+// 			float nominal_v[4] ;
+// 			float out_l[4];
+// 			nominal_v[0]= fabs(u[0][0] / Robot.bat_v.full);
+// 			nominal_v[1]= fabs(u[1][0] / Robot.bat_v.full);
+// 			nominal_v[2]= fabs(u[2][0] / Robot.bat_v.full);
+// 			nominal_v[3]= fabs(u[3][0] / Robot.bat_v.full);
+// 			out_l[0] = (454.2 * nominal_v[0] + 326.3) / (pow(nominal_v[0],2) - 8364.0 * nominal_v[0] + 9120.0) * max_ocr * sign(u[0][0]);
+// 			out_l[1] = (454.2 * nominal_v[1] + 326.3) / (pow(nominal_v[1],2) - 8364.0 * nominal_v[1] + 9120.0) * max_ocr * sign(u[1][0]);
+// 			out_l[2] = (454.2 * nominal_v[2] + 326.3) / (pow(nominal_v[2],2) - 8364.0 * nominal_v[2] + 9120.0) * max_ocr * sign(u[2][0]);
+// 			out_l[3] = (454.2 * nominal_v[3] + 326.3) / (pow(nominal_v[3],2) - 8364.0 * nominal_v[3] + 9120.0) * max_ocr * sign(u[3][0]);
+// 			
+// 			Robot.W0_sp.full = out_l[0];//u[0][0] /Robot.bat_v.full * max_ocr;
+// 			Robot.W1_sp.full = out_l[1];//u[1][0] /Robot.bat_v.full * max_ocr;
+// 			Robot.W2_sp.full = out_l[2];//u[2][0] /Robot.bat_v.full * max_ocr;
+// 			Robot.W3_sp.full = out_l[3];//u[3][0] /Robot.bat_v.full * max_ocr;
+// 			data = packing_data ;
 			
 		}
 		
