@@ -292,10 +292,14 @@ void Reza_state_feed_back ( void )
 	// applied u = u_saturated = saturation(u_total);
 	double err[3];
 	double temp_i[3]={0,0,0};
-	err[0]=Vx_sp-sensor[0];
-	err[1]=Vy_sp-sensor[1];
-	err[2]=W_sp-sensor[2];
+// 	err[0]=Vx_sp-sensor[0];
+// 	err[1]=Vy_sp-sensor[1];
+// 	err[2]=W_sp-sensor[2];
 	
+	err[0]=1-sensor[0];
+	err[1]=0-sensor[1];
+	err[2]=0-sensor[2];
+		
 	for (char i=0;i<4;i++)
 	{
 		temp_i[i]=K_CNT_I[i][0]*err[0]+K_CNT_I[i][1]*err[1]+K_CNT_I[i][2]*err[2];
